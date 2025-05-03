@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react"; // Lucide icons for menu and close
+import { Menu, X } from "lucide-react"; 
 import { useState } from "react";
 import Button from "./Button";
 import "/Users/sabbirahmad/The Daily Drift/frontend/src/index.css";

@@ -1,12 +1,16 @@
+import { Route, Routes } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import "/Users/sabbirahmad/The Daily Drift/frontend/src/index.css";
+import Home from '../pages/Home';
+
 function App() {
-  return(
-    <div className="bg-black min-h-screen text-white">
+  return (
+    <>
       <Navbar />
-      {/* Add Routes here */}
-    </div>
-  )
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </>
+  );
 }
 
 export default App;
