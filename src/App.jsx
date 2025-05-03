@@ -1,12 +1,16 @@
-import Navbar from '../components/Navbar';
-import "/Users/sabbirahmad/The Daily Drift/frontend/src/index.css";
+import { Outlet } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
+import Footer from "../components/Footer";
+import "../src/index.css";
 function App() {
-  return(
+  return (
     <div className="bg-black min-h-screen text-white">
       <Navbar />
-      {/* Add Routes here */}
+      <Outlet />
+      <Footer />
     </div>
-  )
+  );
 }
 
 export default App;
