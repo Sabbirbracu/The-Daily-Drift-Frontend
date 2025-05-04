@@ -20,7 +20,14 @@ export const AuthSlice = createApi({
         body: credential,
       }),
     }),
+    getAccessToken: builder.query({
+      query: () => ({
+        url: "auth/access-token",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation } = AuthSlice;
+export const { useRegisterMutation, useLoginMutation, useGetAccessTokenQuery } =
+  AuthSlice;
