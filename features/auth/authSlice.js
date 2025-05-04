@@ -1,19 +1,26 @@
-// src/features/auth/authSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const initialState = {
-  user: null,
-  loading: false,
-};
-
-const authSlice = createSlice({
-  name: 'auth',
-  initialState,
-  reducers: {
-    setUser: (state, action) => { state.user = action.payload },
-    logout: (state) => { state.user = null }
-  },
+export const AuthSlice = createApi({
+  reducerPath: "AuthSlice",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5000/api",
+  }),
+  endpoints: (builder) => ({
+    register: builder.mutation({
+      query: (user) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: user,
+      }),
+    }),
+    login: builder.mutation({
+      query: (credential) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: credential,
+      }),
+    }),
+  }),
 });
 
-export const { setUser, logout } = authSlice.actions;
-export default authSlice.reducer;
+export const { useRegisterMutation, useLoginMutation } = AuthSlice;

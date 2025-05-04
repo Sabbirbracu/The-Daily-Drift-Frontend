@@ -1,8 +1,7 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
-
-import Footer from "../components/Footer";
-import "../src/index.css";
+import Footer from "./components/Footer";
+import Navbar from "./components/Navbar";
+import "./index.css";
 function App() {
   return (
     <div className="bg-black min-h-screen text-white">

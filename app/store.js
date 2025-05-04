@@ -1,10 +1,12 @@
-// src/app/store.js
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '/Users/sabbirahmad/The Daily Drift/frontend/features/auth/authslice';
+import { configureStore } from "@reduxjs/toolkit";
+import { AuthSlice } from "../features/auth/authSlice";
 
-export const store = configureStore({
+const Store = configureStore({
   reducer: {
-    auth: authReducer,
-    // add API slices later
+    [AuthSlice.reducerPath]: AuthSlice.reducer,
   },
+  middleware: (defaultMiddleWare) =>
+    defaultMiddleWare().concat(AuthSlice.middleware),
 });
+
+export default Store;
