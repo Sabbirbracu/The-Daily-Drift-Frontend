@@ -17,7 +17,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className=" bg-gray-700 text-white py-2.5 content-font">
+    <nav className=" bg-gray-900 text-white py-2.5 content-font">
       <div className="container mx-auto flex justify-between items-center">
         <h2 className="text-sm lg:text-3xl font-bold primary-font">
           The Daily Drift

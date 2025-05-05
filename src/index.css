@@ -30,7 +30,7 @@ body {
   transition: background-color 0.3s;
 }
 
-.HeaderButton:hover {
+.red-button:hover {
   background-color: #ffffff;
   color: red;
   transition: 0.1ms;
