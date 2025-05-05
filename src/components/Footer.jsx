@@ -13,7 +13,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brand Section */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-3">YourCompany</h2>
+          <h2 className="text-xl font-bold text-white mb-3">The Daily Drift</h2>
           <p className="text-sm">
             Empowering users with quality content and tools to thrive in the
             digital world.
