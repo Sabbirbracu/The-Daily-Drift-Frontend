@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { useGetAccessTokenQuery } from "../../features/auth/authSlice";
+import { useGetAccessTokenQuery } from "../authSlice";
 
 const useAuth = () => {
   const { data: newToken } = useGetAccessTokenQuery();

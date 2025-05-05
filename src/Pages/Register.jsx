@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterMutation } from "../../features/auth/authSlice";
+import { useRegisterMutation } from "../features/auth/authSlice";
 
 const Register = () => {
   const [register, { isError, error, isLoading }] = useRegisterMutation();
@@ -9,6 +9,7 @@ const Register = () => {
     email: "",
     password: "",
   });
+  const [success, setSuccess] = useState(false); // State for success popup
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,7 +23,11 @@ const Register = () => {
       console.log(response);
 
       setFormData({ name: "", email: "", password: "" });
-      navigate("/");
+      setSuccess(true); // Show success popup
+      setTimeout(() => {
+        setSuccess(false); // Hide the success popup after 3 seconds
+        navigate("/");
+      }, 3000);
     } catch (err) {
       console.error("Registration failed:", err || err.message);
     }
@@ -31,6 +36,18 @@ const Register = () => {
   return (
     <div className="text-center mt-10">
       <>
+        {/* Success Popup */}
+        {success && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="bg-green-500 text-white p-4 rounded-md shadow-lg">
+                <h3 className="text-lg font-semibold">Registration Successful!</h3>
+                <p>Your account has been created successfully.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
         <div className="fixed inset-0 flex items-center justify-center z-50">

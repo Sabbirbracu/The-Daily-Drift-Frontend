@@ -1,4 +1,4 @@
-import { useGetPostsQuery } from "../features/api/postApi";
+import { useGetPostsQuery } from "../features/post/postApi";
 
 const HeroCarousel = () => {
   const { data: posts = [], isLoading, error } = useGetPostsQuery();
