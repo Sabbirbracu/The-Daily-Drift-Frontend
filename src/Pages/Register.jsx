@@ -24,7 +24,7 @@ const Register = () => {
       setFormData({ name: "", email: "", password: "" });
       navigate("/");
     } catch (err) {
-      console.error("Registration failed:", err?.data?.message || err.message);
+      console.error("Registration failed:", err || err.message);
     }
   };
 
