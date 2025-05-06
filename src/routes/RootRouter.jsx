@@ -15,12 +15,21 @@ const AppRoutes = () => {
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
-          <Route path="/dashboard-user" element={<UserDashboard />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* User Dashboard with relative nested route */}
+          <Route path="/dashboard-user" element={<UserDashboard />}>
+            <Route path="post" element={<h1>Welcome to post</h1>} />{" "}
+            {/* This is relative */}
+          </Route>
+
+          {/* Admin Dashboard protected by PrivateRoute */}
           <Route
             path="/dashboard-admin"
             element={
               <PrivateRoute>
+                {" "}
+                {/* Ensure PrivateRoute checks authentication */}
                 <AdminDashboard />
               </PrivateRoute>
             }

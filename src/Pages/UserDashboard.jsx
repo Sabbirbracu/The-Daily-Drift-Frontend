@@ -1,4 +1,5 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar"; // Adjust the path if needed
 
 const UserDashboard = () => {
@@ -16,12 +17,7 @@ const UserDashboard = () => {
 
       {/* Main Content */}
       <main className="flex-1 p-6">
-        <h1 className="text-3xl font-semibold mb-4">
-          Welcome to your Dashboard
-        </h1>
-        <div className="bg-gray-800 p-6 rounded-lg shadow">
-          <p>This is the main content area in dark mode.</p>
-        </div>
+        <Outlet />
       </main>
     </div>
   );
