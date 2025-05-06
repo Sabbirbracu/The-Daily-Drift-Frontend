@@ -9,7 +9,7 @@ const Register = () => {
     email: "",
     password: "",
   });
-  const [success, setSuccess] = useState(false); // State for success popup
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,28 +20,34 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await register(formData).unwrap();
-      console.log(response);
+      console.log("Registration success:", response);
 
       setFormData({ name: "", email: "", password: "" });
-      setSuccess(true); // Show success popup
+      setSuccess(true);
       setTimeout(() => {
-        setSuccess(false); // Hide the success popup after 3 seconds
+        setSuccess(false);
         navigate("/");
       }, 3000);
     } catch (err) {
-      console.error("Registration failed:", err || err.message);
+      console.error("Registration failed:", err);
+      if (err?.data) {
+        console.error("Error data:", err.data);
+      } else {
+        console.error("Error message:", err.message);
+      }
     }
   };
 
   return (
     <div className="text-center mt-10">
       <>
-        {/* Success Popup */}
         {success && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
             <div className="fixed inset-0 flex items-center justify-center z-50">
               <div className="bg-green-500 text-white p-4 rounded-md shadow-lg">
-                <h3 className="text-lg font-semibold">Registration Successful!</h3>
+                <h3 className="text-lg font-semibold">
+                  Registration Successful!
+                </h3>
                 <p>Your account has been created successfully.</p>
               </div>
             </div>
@@ -80,6 +86,7 @@ const Register = () => {
                   placeholder="you@example.com"
                 />
               </div>
+
               <div>
                 <label className="block mb-1">Password</label>
                 <input
@@ -92,16 +99,20 @@ const Register = () => {
                   placeholder="••••••••"
                 />
               </div>
+
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
               >
-                {isLoading ? "Sending...." : "Register"}
+                {isLoading ? "Sending..." : "Register"}
               </button>
             </form>
+
             {isError && (
               <div className="text-red-500 text-sm mt-2">
-                {error?.data?.message || "Something went wrong. Try again!"}
+                {error?.data?.message ||
+                  error?.error ||
+                  "Something went wrong. Try again!"}
               </div>
             )}
 
@@ -110,7 +121,7 @@ const Register = () => {
                 to={"/login"}
                 className="text-sm text-blue-600 hover:underline"
               >
-                Already Have A Account? Login
+                Already have an account? Login
               </Link>
             </div>
 
