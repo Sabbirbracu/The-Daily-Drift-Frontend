@@ -2,7 +2,7 @@ import HeroCarousel from '../components/Carousal';
 
 const HeroSection = () => {
   return (
-    <section className="relative h-screen w-full">
+    <section className="relative h-lvh w-full">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
