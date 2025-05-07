@@ -1,12 +1,9 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 const NavItem = ({ categories }) => {
-  const navigate = useNavigate();
-  const handleLogut = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/");
-  };
+  const { userRole } = useAuth() || {};
   return (
     <>
       <ul className="hidden lg:flex gap-6 items-center">
@@ -15,17 +12,23 @@ const NavItem = ({ categories }) => {
             key={category}
             className="hover:text-red-400 cursor-pointer transition text-sm md:text-base"
           >
-            {category}
+            <Link to={`/${category.toLowerCase()}`}>{category}</Link>
           </li>
         ))}
         <li className="hover:text-red-400 cursor-pointer transition text-sm md:text-base">
-          Contact Us
-        </li>
-        <li className="red-button py-2 px-4 rounded-lg">
-          {!useAuth() ? (
-            <Link to={"/login"}>Login</Link>
+          {useAuth() ? (
+            <Link
+              to={userRole === "admin" ? "/dashboard-admin" : "/dashboard-user"}
+            >
+              <FaUserCircle className="text-2xl" />
+            </Link>
           ) : (
-            <button onClick={handleLogut}>Logout</button>
+            <Link
+              className="bg-red-400 text-white text-sm sm:text-base px-4 py-2"
+              to={"/login"}
+            >
+              login
+            </Link>
           )}
         </li>
       </ul>

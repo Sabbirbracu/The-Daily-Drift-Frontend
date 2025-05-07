@@ -21,7 +21,7 @@ const Login = () => {
       const result = await login(formData).unwrap();
       if (result?.token) {
         localStorage.setItem("accessToken", result.token);
-        navigate("/");
+        navigate("/home");
       }
     } catch (err) {
       console.error("Login failed:", err);
