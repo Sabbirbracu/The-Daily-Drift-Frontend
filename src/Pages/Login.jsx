@@ -21,7 +21,12 @@ const Login = () => {
       const result = await login(formData).unwrap();
       if (result?.token) {
         localStorage.setItem("accessToken", result.token);
+
         navigate("/home");
+
+        console.log("Token saved:", localStorage.getItem("accessToken"));
+        navigate("/");
+
       }
     } catch (err) {
       console.error("Login failed:", err);
