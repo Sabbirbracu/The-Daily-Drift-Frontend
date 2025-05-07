@@ -1,3 +1,4 @@
+import { LuKanban } from "react-icons/lu";
 import { useGetPostsQuery } from "../../features/post/postApi";
 import ListPostCard from "../card/ListPostCard";
 import PostCard from "../postCard";
@@ -15,7 +16,7 @@ const FeaturedPostsSection = () => {
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-        <span className="text-red-500 text-3xl">‖</span> Featured Posts
+      <LuKanban className="text-red-500 text-5xl font-extrabold"/> Featured Posts
       </h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,4 +1,4 @@
-import HeroCarousel from '../components/Carousal';
+import HeroCarousel from '../Carousal';
 
 const HeroSection = () => {
   return (
@@ -7,10 +7,10 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?auto=format&fit=crop&w=1920&q=80')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1579532536935-619928decd08?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
         }}
       >
-        <div className="absolute inset-0 bg-black opacity-70" />
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
       {/* Content */}

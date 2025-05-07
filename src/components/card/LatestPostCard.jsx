@@ -2,7 +2,7 @@ const LatestPostCard = ({ post }) => {
     return (
       <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition">
         <img
-          src={post.thumbnail || "/default.jpg"}
+          src={post.image || "/default.jpg"}
           alt={post.title}
           className="w-full h-48 object-cover"
         />

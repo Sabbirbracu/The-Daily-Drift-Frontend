@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGetPostsQuery } from "../../features/post/postApi";
 import PostCard from "../postCard";
+import { LuKanban } from "react-icons/lu";
 
 const FeaturedCategorySection = () => {
   const { data: posts = [], isLoading, isError } = useGetPostsQuery();
@@ -30,7 +31,9 @@ const FeaturedCategorySection = () => {
     <section className="mb-10">
       {/* Section Heading */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Featured Categories</h2>
+      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+      <LuKanban className="text-red-500 text-5xl font-extrabold"/> Featured Categories
+      </h2>
         <div className="space-x-4">
           {categories.map((cat) => (
             <button

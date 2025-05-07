@@ -1,9 +1,9 @@
 const categories = [
-    { name: "Movies", count: 3 },
-    { name: "Fighter", count: 2 },
-    { name: "Adventure", count: 3 },
-    { name: "Commando", count: 0 },
-    { name: "Action", count: 3 },
+    { name: "Travel", count: 3 },
+    { name: "Technology", count: 2 },
+    { name: "News", count: 3 },
+    { name: "Food", count: 0 },
+    { name: "Health", count: 3 },
   ];
   
   const CategoryWidget = () => {
