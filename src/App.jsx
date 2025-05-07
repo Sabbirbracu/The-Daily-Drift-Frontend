@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
+import GeminiSearch from "./components/GeminiSearch";
 import Navbar from "./components/Navbar";
 import "./index.css";
 function App() {
@@ -8,6 +9,7 @@ function App() {
       <Navbar />
       <Outlet />
       <Footer />
+      <GeminiSearch />
     </div>
   );
 }
