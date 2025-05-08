@@ -1,30 +1,39 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import baseQueryWithReauth from "../auth/Api.js";
 
+// Define your API
 export const postApi = createApi({
-  reducerPath: 'postApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5000', 
-    credentials: 'include', 
-  }),
-  tagTypes: ['Post'],
+  reducerPath: "postApi",
+  baseQuery: baseQueryWithReauth,
+  tagTypes: ["Post"],
+
   endpoints: (builder) => ({
-    
     getPosts: builder.query({
-      query: () => '/api/posts',
-      providesTags: ['Post'],
+      query: () => "/posts",
+
+      providesTags: ["Post"],
     }),
     getPostById: builder.query({
       query: (id) => `/api/posts/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Post', id }],
+      providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
-    
     suspendPost: builder.mutation({
       query: (postId) => ({
         url: `/admin/posts/${postId}/suspend`,
-        method: 'PUT',
+        method: "PUT",
       }),
-      invalidatesTags: ['Post'],
+      invalidatesTags: ["Post"],
+    }),
+    getPostByUser: builder.query({
+      query: () => "/posts/ownPost",
+    }),
+    createPost: builder.mutation({
+      query: (data) => ({
+        url: "/posts",
+        method: "POST",
+        body: data,
+      }),
     }),
   }),
 });
@@ -32,5 +41,9 @@ export const postApi = createApi({
 export const {
   useGetPostsQuery,
   useGetPostByIdQuery,
+
+  useGetPostByUserQuery,
+  useCreatePostMutation,
+
   useSuspendPostMutation,
 } = postApi;

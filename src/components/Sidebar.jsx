@@ -1,10 +1,15 @@
 import { Menu, X } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-const Sidebar = ({ menuItems, onLogout }) => {
+const Sidebar = ({ menuItems }) => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const onLogout = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/");
+  };
 
   return (
     <aside

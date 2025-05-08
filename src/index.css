@@ -36,3 +36,16 @@ body {
   transition: 0.1ms;
   animation-duration: 300ms;
 }
+
+.ProseMirror img {
+  max-width: 400px;
+  max-height: 400px;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tiptap:focus {
+  outline: none !important;
+}
