@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../features/auth/authSlice";
+import useAuth from "../features/auth/hooks/useAuth";
 
 const Login = () => {
-  const [login, { isError, isLoading, error }] = useLoginMutation();
+  const [{ isError, isLoading, error }] = useLoginMutation();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const { Login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -17,16 +19,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const result = await login(formData).unwrap();
-      if (result?.token) {
-        localStorage.setItem("accessToken", result.token);
-        console.log("Token saved:", localStorage.getItem("accessToken"));
-        navigate("/");
-      }
-    } catch (err) {
-      console.error("Login failed:", err);
-    }
+    const result = await Login(formData);
+    if (result) return navigate("/");
+
+    // try {
+    //   const result = await login(formData).unwrap();
+    //   if (result?.token) {
+    //     localStorage.setItem("accessToken", result.token);
+    //     console.log("Token saved:", localStorage.getItem("accessToken"));
+    //     navigate("/");
+    //   }
+    // } catch (err) {
+    //   console.error("Login failed:", err);
+    // }
   };
 
   return (

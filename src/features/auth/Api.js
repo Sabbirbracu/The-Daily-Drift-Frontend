@@ -28,7 +28,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       // Retry original request with new token
       result = await baseQuery(args, api, extraOptions);
     } else {
-      // Failed to refresh, force logout?
+        // Failed to refresh, force logout
+        localStorage.removeItem("accessToken");
+        window.location.href = "/";
     }
   }
 

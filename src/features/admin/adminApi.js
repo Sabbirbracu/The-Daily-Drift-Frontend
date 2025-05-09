@@ -5,7 +5,7 @@ export const adminApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5000/api',
     prepareHeaders: (headers, { getState }) => {
-      const token = localStorage.getItem('accessToken'); // ✅ matches your Login.jsx
+      const token = localStorage.getItem('accessToken');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }

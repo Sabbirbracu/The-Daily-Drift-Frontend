@@ -1,9 +1,9 @@
-import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "../App.jsx";
 import AdminDashboard from "../Pages/AdminDashboard.jsx";
 import AdminProfile from "../Pages/AdminProfile.jsx";
 import CreatePost from "../Pages/CreatePost.jsx";
+import EditePost from "../Pages/EditePost.jsx";
 import Home from "../Pages/Home.jsx";
 import Login from "../Pages/Login.jsx";
 import ManagePosts from "../Pages/ManagePosts.jsx";
@@ -28,10 +28,10 @@ const AppRoutes = () => {
           {/* user routes */}
           <Route path="/dashboard-user" element={<UserLayout />}>
             <Route index element={<UserDashboard />} />
-            {/* Default nested content */}
             <Route path="post" element={<UserDashboardPost />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="create-post" element={<CreatePost />} />
+            <Route path="edite-post/:id" element={<EditePost />} />
           </Route>
 
           {/* Admin Routes */}

@@ -1,21 +1,18 @@
 import { Menu, X } from "lucide-react";
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import useAuth from "../features/auth/hooks/useAuth";
 
 const Sidebar = ({ menuItems }) => {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const onLogout = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/");
-  };
 
   return (
     <aside
       className={`${
         collapsed ? "w-20" : "w-64"
-      } bg-gray-800 text-white transition-all duration-300 p-4 shadow-lg flex flex-col justify-between`}
+      } h-screen sticky top-4 bg-gray-800 text-white transition-all duration-300 p-4 shadow-lg flex flex-col justify-between`}
     >
       <div>
         {/* Toggle button */}
@@ -52,7 +49,7 @@ const Sidebar = ({ menuItems }) => {
       {/* Logout */}
       <div
         className="mt-6 hover:text-red-400 cursor-pointer flex items-center gap-2"
-        onClick={onLogout}
+        onClick={logout}
         title="Logout"
       >
         <span>🚪</span>
