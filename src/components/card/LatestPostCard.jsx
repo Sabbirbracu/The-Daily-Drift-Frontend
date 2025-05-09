@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
-import { FiMoreVertical, FiShare2 } from "react-icons/fi";
+import { FiShare2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import useAuth from "../../features/auth/hooks/useAuth"; // to get logged-in user
 import { useToggleLikeMutation } from "../../features/post/likeApi"; // adjust path if needed
+import { useDeletePostMutation } from "../../features/post/postApi";
 
 const LatestPostCard = ({ post, showMenu = false }) => {
   const [likes, setLikes] = useState(post.likes?.length || 0);
   const [liked, setLiked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [toggleLike, { isLoading }] = useToggleLikeMutation();
-  const { userId } = useAuth() || {}; // safely access userId
+  const { user } = useAuth(); // safely access user.id
+  const [deletePost] = useDeletePostMutation();
 
   useEffect(() => {
     // Set initial like status
-    if (post.likes?.includes(userId)) {
+    if (post.likes?.includes(user.id)) {
       setLiked(true);
     }
-  }, [post.likes, userId]);
+  }, [post.likes, user.id]);
 
   const handleLike = async () => {
-    if (!userId) return alert("Please log in to like posts.");
+    if (!user.id) return alert("Please log in to like posts.");
 
     try {
       await toggleLike(post._id).unwrap();
@@ -33,12 +35,26 @@ const LatestPostCard = ({ post, showMenu = false }) => {
   };
 
   const toggleModal = () => setShowModal((prev) => !prev);
+  const handleDelete = async () => {
+    const result = await deletePost(post._id).unwrap();
+    console.log("🚀 ~ handleDelete ~ result:", result);
+  };
 
   return (
-    <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative">
+    <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative group">
       {showMenu && (
-        <div className="absolute top-2 right-2 text-white cursor-pointer">
-          <FiMoreVertical />
+        <div className="hidden group-hover:flex transition-all duration-700 absolute top-2.5 left-2.5 space-x-2.5">
+          <button className="bg-yellow-400 px-4 py-2 rounded-md cursor-pointer">
+            <Link to={`/dashboard-${user.role}/edite-post/${post._id}`}>
+              Edite
+            </Link>
+          </button>
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 px-4 py-2 rounded-md cursor-pointer"
+          >
+            Delete
+          </button>
         </div>
       )}
 
@@ -54,7 +70,9 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           <span>{new Date(post.createdAt).toDateString()}</span>
         </div>
 
-        <h3 className="text-lg font-semibold mb-3 line-clamp-2">{post.title}</h3>
+        <h3 className="text-lg font-semibold mb-3 line-clamp-2">
+          {post.title}
+        </h3>
 
         <div className="flex justify-start space-x-3 text-gray-400 text-sm items-center">
           <Link to={`/post/${post._id}`} className="hover:text-white">
@@ -66,13 +84,20 @@ const LatestPostCard = ({ post, showMenu = false }) => {
             disabled={isLoading}
             className="flex items-center space-x-1 hover:text-red-400 transition"
           >
-            <FaHeart className={`transition-transform ${liked ? "scale-125 text-red-500" : ""}`} />
+            <FaHeart
+              className={`transition-transform ${
+                liked ? "scale-125 text-red-500" : ""
+              }`}
+            />
             <span>{likes} Likes</span>
           </button>
 
           <span>👁️ {post.views || 0} Views</span>
 
-          <button onClick={toggleModal} className="flex items-center space-x-1 hover:text-blue-400">
+          <button
+            onClick={toggleModal}
+            className="flex items-center space-x-1 hover:text-blue-400"
+          >
             <FiShare2 />
             <span>Share</span>
           </button>
@@ -90,7 +115,10 @@ const LatestPostCard = ({ post, showMenu = false }) => {
               className="w-full p-2 border border-gray-300 rounded-md"
             />
             <div className="flex justify-end mt-3">
-              <button onClick={toggleModal} className="bg-red-500 text-white px-4 py-2 rounded-md">
+              <button
+                onClick={toggleModal}
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+              >
                 Close
               </button>
             </div>

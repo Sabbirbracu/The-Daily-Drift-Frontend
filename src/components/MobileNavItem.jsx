@@ -1,10 +1,9 @@
-import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 
 const MobileNavItem = ({ categories }) => {
-  const { userId, userRole } = useAuth() || {};
+  const { user } = useAuth() || {};
   const getUrl = (category) => {
     if (category.toLowerCase() === "home") return "/";
     return `/${category.toLowerCase()}`;
@@ -22,9 +21,9 @@ const MobileNavItem = ({ categories }) => {
       ))}
 
       <li className=" flex justify-center  hover:text-red-400 cursor-pointer transition text-sm md:text-base">
-        {userId ? (
+        {user ? (
           <Link
-            to={userRole === "admin" ? "/dashboard-admin" : "/dashboard-user"}
+            to={user.role === "admin" ? "/dashboard-admin" : "/dashboard-user"}
           >
             <FaUserCircle className="text-2xl" />
           </Link>
