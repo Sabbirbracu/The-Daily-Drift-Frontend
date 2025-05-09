@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react"; // Lucide icons for menu and close
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import ".././index.css";
 import MobileNavItem from "./MobileNavItem";
@@ -10,7 +10,7 @@ const Navbar = () => {
   return (
     <nav className=" bg-gray-900 text-white py-2.5 content-font">
       <div className="container mx-auto flex justify-between items-center">
-        <h2 className="text-sm lg:text-3xl font-bold primary-font">
+        <h2 className="text-sm lg:text-4xl font-bold primary-font">
           The Daily Drift
         </h2>
 

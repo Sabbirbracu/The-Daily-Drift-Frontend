@@ -28,21 +28,18 @@ const AppRoutes = () => {
           {/* user routes */}
           <Route path="/dashboard-user" element={<UserLayout />}>
             <Route index element={<UserDashboard />} />
-            {/* Default nested content */}
             <Route path="post" element={<UserDashboardPost />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="create-post" element={<CreatePost />} />
           </Route>
 
           {/* Admin Routes */}
-          <Route
-            path="/dashboard-admin"
-            element={
+          <Route path="/dashboard-admin"element={
               <PrivateRoute>
                 <AdminLayout />
               </PrivateRoute>
-            }
-          >
+            }>
+              
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="posts" element={<ManagePosts />} />

@@ -11,7 +11,7 @@ const NavItem = ({ categories }) => {
   const { userRole } = useAuth() || {};
   return (
     <>
-      <ul className="hidden lg:flex gap-6 items-center">
+      <ul className="py-3 hidden lg:flex gap-6 items-center">
         {categories.map((category) => (
           <li
             key={category}
@@ -29,7 +29,7 @@ const NavItem = ({ categories }) => {
             </Link>
           ) : (
             <Link
-              className="bg-red-400 rounded-3xl text-white text-sm sm:text-base px-4 py-1"
+              className="red-button rounded-3xl text-white text-sm sm:text-base px-4 py-1"
               to={"/login"}
             >
               login

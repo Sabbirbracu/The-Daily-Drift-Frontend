@@ -30,8 +30,6 @@ const AdminDashboard = () => {
           bgColor="bg-blue-100" 
           textColor="text-blue-800"
         />
-        {console.log(statsData)}
-        {console.log(roleData)}
         <StatCard
           title="Total Posts"
           value={statsLoading ? '...' : statsData?.totalPosts}
