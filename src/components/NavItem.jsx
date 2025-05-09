@@ -1,4 +1,3 @@
-import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
@@ -8,7 +7,7 @@ const NavItem = ({ categories }) => {
     return `/${category.toLowerCase()}`;
   };
 
-  const { userRole } = useAuth() || {};
+  const { user } = useAuth();
   return (
     <>
       <ul className="py-3 hidden lg:flex gap-6 items-center">
@@ -21,9 +20,11 @@ const NavItem = ({ categories }) => {
           </li>
         ))}
         <li className="hover:text-red-400 cursor-pointer transition text-sm md:text-base capitalize">
-          {useAuth() ? (
+          {user ? (
             <Link
-              to={userRole === "admin" ? "/dashboard-admin" : "/dashboard-user"}
+              to={
+                user.role === "admin" ? "/dashboard-admin" : "/dashboard-user"
+              }
             >
               <FaUserCircle className="text-2xl" />
             </Link>
