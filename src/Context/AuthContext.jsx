@@ -1,9 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { createContext, useEffect, useState } from "react";
-import {
-  useGetAccessTokenQuery,
-  useLoginMutation,
-} from "../features/auth/authSlice";
+import { useGetAccessTokenQuery, useLoginMutation } from "../features/auth/authSlice";
 
 export const AuthContext = createContext();
 
@@ -68,8 +65,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, loading, Login }}>
+    <AuthContext.Provider value={{ user, userRole: user?.role, logout, loading, Login }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
