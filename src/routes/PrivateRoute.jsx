@@ -1,13 +1,12 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 
 const PrivateRoute = ({ children }) => {
   const navigate = useNavigate();
-  const { userRole } = useAuth();
+  const { user } = useAuth();
 
-  if (userRole !== "admin") {
-    console.log(userRole);
+  if (user?.role !== "admin") {
+    console.log(user?.role);
     return navigate("/");
   }
 
