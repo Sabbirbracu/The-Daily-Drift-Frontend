@@ -1,6 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import ProfileMenu from "../components/ProfileMenu";
 import useAuth from "../features/auth/hooks/useAuth";
 
 const UserDashboard = () => {
@@ -17,12 +16,13 @@ const UserDashboard = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       {/* ✅ Top Navbar */}
-      <header className="flex justify-between items-center px-6 py-4 bg-gray-800 shadow">
+
+      {/* <header className="flex justify-between items-center px-6 py-4 bg-gray-800 shadow">
         <h1 className="text-2xl font-bold">The Daily Drift</h1>
 
-        {/* 👤 Profile menu at top right */}
+        
         <ProfileMenu />
-      </header>
+      </header> */}
 
       {/* Main layout */}
       <div className="flex flex-1">

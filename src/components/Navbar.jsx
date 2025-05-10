@@ -1,5 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import ".././index.css";
 import MobileNavItem from "./MobileNavItem";
 import NavItem from "./NavItem";
@@ -10,9 +11,9 @@ const Navbar = () => {
   return (
     <nav className=" bg-gray-900 text-white py-2.5 content-font sticky top-0 left-0 right-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
-        <h2 className="text-sm lg:text-4xl font-bold primary-font">
+        <Link to={"/"} className="text-sm lg:text-3xl font-bold primary-font">
           The Daily Drift
-        </h2>
+        </Link>
 
         {/* Desktop Menu */}
         <NavItem categories={categories} />
@@ -26,7 +27,9 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Dropdown Menu */}
-      {menuOpen && <MobileNavItem categories={categories} />}
+      {menuOpen && (
+        <MobileNavItem categories={categories} setMenuOpen={setMenuOpen} />
+      )}
     </nav>
   );
 };
