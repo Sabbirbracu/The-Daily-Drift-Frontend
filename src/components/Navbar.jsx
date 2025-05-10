@@ -5,7 +5,7 @@ import MobileNavItem from "./MobileNavItem";
 import NavItem from "./NavItem";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const categories = ["home", "blog", "contact"];
+  const categories = ["home", "about", "contact"];
 
   return (
     <nav className=" bg-gray-900 text-white py-2.5 content-font sticky top-0 left-0 right-0 z-50">
