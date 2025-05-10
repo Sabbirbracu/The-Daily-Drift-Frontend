@@ -13,16 +13,19 @@ export const AuthProvider = ({ children }) => {
   const { data: newToken } = useGetAccessTokenQuery();
   const [login] = useLoginMutation();
 
+  const isValidJwt = (jwt) =>
+    typeof jwt === "string" && jwt.split(".").length === 3;
+
   useEffect(() => {
     let token = localStorage.getItem("accessToken");
     let decodedUser = null;
 
     try {
-      if (token) {
+      if (token && isValidJwt(token)) {
         const user = jwtDecode(token);
         const currentTime = Date.now() / 1000;
 
-        if (user.exp <= currentTime && newToken) {
+        if (user.exp <= currentTime && newToken && isValidJwt(newToken)) {
           localStorage.setItem("accessToken", newToken);
           token = newToken;
           decodedUser = jwtDecode(newToken);
@@ -31,7 +34,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         setUser(decodedUser);
-      } else if (newToken) {
+      } else if (newToken && isValidJwt(newToken)) {
         localStorage.setItem("accessToken", newToken);
         decodedUser = jwtDecode(newToken);
         setUser(decodedUser);
@@ -50,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     setUser(null);
   };
+
   const Login = async (formData) => {
     try {
       const result = await login(formData).unwrap();

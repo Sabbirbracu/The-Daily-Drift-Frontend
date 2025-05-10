@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import useAuth from "../../features/auth/hooks/useAuth"; // to get logged-in user
-import { useToggleLikeMutation } from "../../features/post/likeApi"; // adjust path if needed
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../features/auth/hooks/useAuth";
+import { useToggleLikeMutation } from "../../features/post/likeApi";
 import { useDeletePostMutation } from "../../features/post/postApi";
 
 const LatestPostCard = ({ post, showMenu = false }) => {
@@ -11,22 +11,23 @@ const LatestPostCard = ({ post, showMenu = false }) => {
   const [liked, setLiked] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [toggleLike, { isLoading }] = useToggleLikeMutation();
-  const { user } = useAuth(); // safely access user.id
+  const { user } = useAuth();
   const [deletePost] = useDeletePostMutation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Set initial like status
-    if (post.likes?.includes(user.id)) {
+    if (user?.id && post.likes?.includes(user.id)) {
       setLiked(true);
     }
-  }, [post.likes, user.id]);
+  }, [post.likes, user?.id]);
 
   const handleLike = async () => {
-    if (!user.id) return alert("Please log in to like posts.");
+    if (!user?.id) {
+      return navigate("/login"); // redirect to login if not logged in
+    }
 
     try {
       await toggleLike(post._id).unwrap();
-      // Optimistically update UI
       setLiked((prev) => !prev);
       setLikes((prev) => (liked ? prev - 1 : prev + 1));
     } catch (err) {
@@ -34,19 +35,27 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     }
   };
 
-  const toggleModal = () => setShowModal((prev) => !prev);
+  const toggleModal = () => {
+    if (!user?.id) return navigate("/login"); // redirect to login if not logged in
+    setShowModal((prev) => !prev);
+  };
+
   const handleDelete = async () => {
-    const result = await deletePost(post._id).unwrap();
-    console.log("🚀 ~ handleDelete ~ result:", result);
+    try {
+      const result = await deletePost(post._id).unwrap();
+      console.log("Post deleted:", result);
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
   };
 
   return (
     <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative group">
-      {showMenu && (
+      {showMenu && user?.role && (
         <div className="hidden group-hover:flex transition-all duration-700 absolute top-2.5 left-2.5 space-x-2.5">
           <button className="bg-yellow-400 px-4 py-2 rounded-md cursor-pointer">
             <Link to={`/dashboard-${user.role}/edite-post/${post._id}`}>
-              Edite
+              Edit
             </Link>
           </button>
           <button
