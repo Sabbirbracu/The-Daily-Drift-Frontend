@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "../App.jsx";
 import About from "../components/about.jsx";
 import AdminDashboard from "../Pages/AdminDashboard.jsx";
-import AdminProfile from "../Pages/AdminProfile.jsx";
 import AllPosts from "../Pages/AllPosts.jsx";
 import Contact from "../Pages/contact.jsx";
 import CreatePost from "../Pages/CreatePost.jsx";
@@ -20,6 +19,7 @@ import UserProfile from "../Pages/UserProfile.jsx";
 
 import AdminLayout from "../layouts/AdminLayouts.jsx";
 import UserLayout from "../layouts/UserLayout.jsx";
+import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 
 const AppRoutes = () => {
@@ -40,10 +40,9 @@ const AppRoutes = () => {
             <Route index element={<UserDashboard />} />
             <Route path="post" element={<UserDashboardPost />} />
             <Route path="profile" element={<UserProfile />} />
+            <Route path="edit-profile" element={<EditeProfilePage />} />
             <Route path="create-post" element={<CreatePost />} />
             <Route path="edite-post/:id" element={<EditePost />} />
-            <Route path="about" element={<About />} />
-            <Route path="contact" element={<Contact />} />
           </Route>
 
           {/* Admin Routes */}
@@ -58,7 +57,8 @@ const AppRoutes = () => {
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="posts" element={<ManagePosts />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route path="profile" element={<UserProfile />} />
+            <Route path="edit-profile" element={<EditeProfilePage />} />
           </Route>
         </Route>
 

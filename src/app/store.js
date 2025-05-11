@@ -1,11 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { adminApi } from '../features/Admin/adminApi';
-import { AuthSlice } from '../features/auth/authSlice';
-import { commentApi } from '../features/comment/commentApi'; 
-import { newsletterApi } from '../features/newsletter/newsletterApi';
-import { postApi } from '../features/post/postApi';
-import { userApi } from '../features/users/userApi';
-import dashboardReducer from '../features/dashboard/dashboardSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import { adminApi } from "../features/Admin/adminApi";
+import { AuthSlice } from "../features/auth/authSlice";
+import { commentApi } from "../features/comment/commentApi";
+import dashboardReducer from "../features/dashboard/dashboardSlice";
+import { newsletterApi } from "../features/newsletter/newsletterApi";
+import { postApi } from "../features/post/postApi";
+import { profileApi } from "../features/Profile/ProfileApi"; //  Import your profileApi
+import { userApi } from "../features/users/userApi";
 
 const Store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const Store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [postApi.reducerPath]: postApi.reducer,
     [newsletterApi.reducerPath]: newsletterApi.reducer,
-    [commentApi.reducerPath]: commentApi.reducer, 
+    [commentApi.reducerPath]: commentApi.reducer,
+    [profileApi.reducerPath]: profileApi.reducer, // Add reducer here
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +26,8 @@ const Store = configureStore({
       userApi.middleware,
       postApi.middleware,
       newsletterApi.middleware,
-      commentApi.middleware
+      commentApi.middleware,
+      profileApi.middleware // Add middleware here
     ),
 });
 
