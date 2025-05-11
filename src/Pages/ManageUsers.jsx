@@ -1,4 +1,10 @@
-import React from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from 'react-redux';
+
+import Modal from "../components/modal";
+import Table from "../components/table";
+
 import {
   useGetAllUsersQuery,
   useMakeAdminMutation,
@@ -7,104 +13,104 @@ import {
   useUnsuspendUserMutation,
 } from "../features/users/userApi";
 
+import { triggerDashboardRefetch } from '../features/dashboard/dashboardSlice';
+
 const ManageUser = () => {
-  const { data: users, error, isLoading } = useGetAllUsersQuery();
+  const dispatch = useDispatch();
+  const { data: users, error, isLoading, refetch } = useGetAllUsersQuery();
+
   const [makeAdmin] = useMakeAdminMutation();
   const [removeAdmin] = useRemoveAdminMutation();
   const [suspendUser] = useSuspendUserMutation();
   const [unsuspendUser] = useUnsuspendUserMutation();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [currentAction, setCurrentAction] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
+  if (isLoading) return <div className="p-6 text-gray-600">Loading...</div>;
   if (error) {
-    return <div>Error loading users</div>;
+    console.error("Error fetching users:", error);
+    return <div className="p-6 text-red-600">Error loading users</div>;
   }
 
-  const handleAdminToggle = async (userId, isAdmin) => {
-    try {
-      if (isAdmin) {
-        await makeAdmin(userId).unwrap();
-      } else {
-        await removeAdmin(userId).unwrap();
-      }
-    } catch (err) {
-      console.error("Failed to update admin role:", err);
+  const transformedUsers = users?.map((u) => ({
+    id: u._id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    admin: u.role === "admin",
+    suspended: u.suspended,
+  }));
+
+  const handleToggle = async (field, userId, currentValue) => {
+    const user = users.find((u) => u._id === userId);
+    const username = user?.name || "User";
+
+    if (field === "admin") {
+      const willBeAdmin = !currentValue;
+      setModalMessage(
+        `Are you sure you want to ${willBeAdmin ? "make admin" : "remove admin role from"} ${username}?`
+      );
+      setCurrentAction(() => async () => {
+        if (willBeAdmin) {
+          await makeAdmin(userId).unwrap();
+          toast.success(`${username} is now an admin!`);
+        } else {
+          await removeAdmin(userId).unwrap();
+          toast.success(`Removed admin role from ${username}`);
+        }
+        dispatch(triggerDashboardRefetch()); // Trigger dashboard refetch
+        await refetch();
+      });
+    } else if (field === "suspended") {
+      const willBeSuspended = !currentValue;
+      setModalMessage(
+        `Are you sure you want to ${willBeSuspended ? "suspend" : "unsuspend"} ${username}?`
+      );
+      setCurrentAction(() => async () => {
+        if (willBeSuspended) {
+          await suspendUser(userId).unwrap();
+          toast.success(`${username} has been suspended.`);
+        } else {
+          await unsuspendUser(userId).unwrap();
+          toast.success(`${username} has been unsuspended.`);
+        }
+        dispatch(triggerDashboardRefetch()); // Trigger dashboard refetch
+        await refetch();
+      });
     }
+
+    setCurrentUserId(userId);
+    setIsModalOpen(true);
   };
 
-  const handleSuspendToggle = async (userId, isSuspended) => {
-    try {
-      if (isSuspended) {
-        await suspendUser(userId).unwrap();
-      } else {
-        await unsuspendUser(userId).unwrap();
-      }
-    } catch (err) {
-      console.error("Failed to update suspension:", err);
+  const handleConfirm = async () => {
+    if (currentAction) {
+      await currentAction();
+      setIsModalOpen(false);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-4">Manage Users</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">Manage Users</h2>
+      <Table
+        columns={["Name", "Email", "Role", "Admin", "Suspended"]}
+        data={transformedUsers}
+        toggleFields={["admin", "suspended"]}
+        onToggle={handleToggle}
+      />
 
-      <table className="min-w-full border-collapse table-auto">
-        <thead>
-          <tr>
-            <th className="border px-4 py-2 text-left">Name</th>
-            <th className="border px-4 py-2 text-left">Email</th>
-            <th className="border px-4 py-2 text-left">Role</th>
-            <th className="border px-4 py-2 text-left">Admin</th>
-            <th className="border px-4 py-2 text-left">Suspend</th>
-            <th className="border px-4 py-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users?.map((user) => (
-            <tr key={user.id} className="hover:bg-gray-100">
-              <td className="border px-4 py-2">{user.name}</td>
-              <td className="border px-4 py-2">{user.email}</td>
-              <td className="border px-4 py-2">{user.role}</td>
-              <td className="border px-4 py-2">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={user.role === "admin"}
-                    onChange={() => handleAdminToggle(user.id, user.role !== "admin")}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-red-500">
-                    <span className="w-4 h-4 bg-white rounded-full transition-transform duration-300 transform peer-checked:translate-x-5" />
-                  </div>
-                </label>
-              </td>
-              <td className="border px-4 py-2">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={user.suspended}
-                    onChange={() => handleSuspendToggle(user.id, !user.suspended)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-red-500">
-                    <span className="w-4 h-4 bg-white rounded-full transition-transform duration-300 transform peer-checked:translate-x-5" />
-                  </div>
-                </label>
-              </td>
-              <td className="border px-4 py-2">
-                <button
-                  onClick={() => console.log(`Edit user with ID: ${user.id}`)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Edit
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Modal
+        isOpen={isModalOpen}
+        message={modalMessage}
+        onConfirm={handleConfirm}
+        onCancel={() => setIsModalOpen(false)}
+        onClose={() => setIsModalOpen(false)}
+        textColor="text-blue-600"
+      />
     </div>
   );
 };

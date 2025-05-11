@@ -1,42 +1,43 @@
-// src/features/users/userApi.js
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import baseQueryWithReauth from "../../features/auth/Api";
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/admin",
-    credentials: "include", 
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["User"],
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: () => "/users",
+      query: () => "/admin/users",
       providesTags: ["User"],
     }),
+
     suspendUser: builder.mutation({
       query: (id) => ({
-        url: `/users/${id}/suspend`,
+        url: `/admin/users/${id}/suspend`,
         method: "PUT",
       }),
       invalidatesTags: ["User"],
     }),
+
     unsuspendUser: builder.mutation({
       query: (id) => ({
-        url: `/users/${id}/unsuspend`,
+        url: `/admin/users/${id}/unsuspend`,
         method: "PUT",
       }),
       invalidatesTags: ["User"],
     }),
+
     makeAdmin: builder.mutation({
       query: (id) => ({
-        url: `/users/${id}/make-admin`,
+        url: `/admin/users/${id}/make-admin`,
         method: "PUT",
       }),
       invalidatesTags: ["User"],
     }),
+
     removeAdmin: builder.mutation({
       query: (id) => ({
-        url: `/users/${id}/remove-admin`,
+        url: `/admin/users/${id}/make-user`,
         method: "PUT",
       }),
       invalidatesTags: ["User"],
