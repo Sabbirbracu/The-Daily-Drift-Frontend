@@ -137,8 +137,14 @@ export const postApi = createApi({
   tagTypes: ["Post"],
 
   endpoints: (builder) => ({
+    // ✅ GET all posts for public/all post listing
     // Get posts by optional status or search (approved, pending, declined)
     getPosts: builder.query({
+      query: () => "/posts",
+      providesTags: (result) =>
+        result
+          ? [...result.map(({ _id }) => ({ type: "Post", id: _id })), "Post"]
+          : ["Post"],
       query: ({ search = "", status } = {}) => ({
         url: "/posts",
         params: { search, status },
@@ -155,17 +161,24 @@ export const postApi = createApi({
       providesTags: ["Post"],
     }),
 
+    // ✅ GET single post by ID
+
     // Get single post by ID
     getPostById: builder.query({
+      query: (id) => `/posts/${id}`,
       query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
+    // ✅ GET posts for logged-in user
     // Get current user's posts
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
       providesTags: ["Post"],
+      providesTags: ["Post"],
     }),
+
+    // ✅ CREATE a new post
 
     // Create post
     createPost: builder.mutation({
@@ -174,6 +187,10 @@ export const postApi = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Post"],
+    }),
+
+    // ✅ DELETE a post
       invalidatesTags: ["Post"],
     }),
 
@@ -193,6 +210,16 @@ export const postApi = createApi({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Post"],
+    }),
+
+    // ✅ SUSPEND a post (admin only)
+    suspendPost: builder.mutation({
+      query: (postId) => ({
+        url: `/admin/posts/${postId}/suspend`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["Post"],
       invalidatesTags: ["Post"],
     }),
 
@@ -255,3 +282,14 @@ export const {
   useApprovePostMutation,
   useDeclinePostMutation,
 } = postApi;
+
+export const postReducer = postApi.reducer;
+
+export const {
+  getPosts,
+  getPostById,
+  getPostByUser,
+  createPost,
+  suspendPost,
+  deletePost,
+} = postApi.endpoints;

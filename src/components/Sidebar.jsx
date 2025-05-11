@@ -1,28 +1,13 @@
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 
 const Sidebar = ({ menuItems }) => {
   const { logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   return (
-    <aside
-      className={`${
-        collapsed ? "w-20" : "w-64"
-      } h-screen sticky top-4 bg-gray-800 text-white transition-all duration-300 p-4 shadow-lg flex flex-col justify-between`}
-    >
+    <aside className="w-64 h-screen sticky top-4 bg-gray-800 text-white p-4 shadow-lg flex flex-col justify-between">
       <div>
-        {/* Toggle button */}
-        <button
-          className="mb-6 self-end"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <Menu /> : <X />}
-        </button>
-
         {/* Menu Items */}
         <nav className="space-y-4">
           {menuItems.map((item, index) => {
@@ -38,7 +23,7 @@ const Sidebar = ({ menuItems }) => {
                   }`}
                 >
                   <span>{item.icon}</span>
-                  {!collapsed && <span>{item.label}</span>}
+                  <span>{item.label}</span>
                 </div>
               </Link>
             );
@@ -53,7 +38,7 @@ const Sidebar = ({ menuItems }) => {
         title="Logout"
       >
         <span>🚪</span>
-        {!collapsed && <span>Logout</span>}
+        <span>Logout</span>
       </div>
     </aside>
   );

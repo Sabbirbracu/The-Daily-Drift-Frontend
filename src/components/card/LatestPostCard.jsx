@@ -4,6 +4,10 @@ import { FiShare2 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../features/auth/hooks/useAuth";
 import { useToggleLikeMutation } from "../../features/post/likeApi";
+import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import useAuth from "../../features/auth/hooks/useAuth";
+import { useToggleLikeMutation } from "../../features/post/likeApi";
 import { useDeletePostMutation } from "../../features/post/postApi";
 
 const LatestPostCard = ({ post, showMenu = false }) => {
@@ -14,17 +18,22 @@ const LatestPostCard = ({ post, showMenu = false }) => {
   const { user } = useAuth();
   const [deletePost] = useDeletePostMutation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.id && post.likes?.includes(user.id)) {
       setLiked(true);
     }
   }, [post.likes, user?.id]);
+    setLiked(user?.id && post.likes?.includes(user.id));
+  }, [post.likes, user?.id]);
 
   const handleLike = async () => {
     if (!user?.id) {
       return navigate("/login"); // redirect to login if not logged in
     }
+    if (!user?.id) return navigate("/login");
 
     try {
       await toggleLike(post._id).unwrap();
@@ -40,6 +49,11 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     setShowModal((prev) => !prev);
   };
 
+  const toggleModal = () => {
+    if (!user?.id) return navigate("/login");
+    setShowModal((prev) => !prev);
+  };
+
   const handleDelete = async () => {
     try {
       const result = await deletePost(post._id).unwrap();
@@ -47,7 +61,15 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     } catch (error) {
       console.error("Delete failed:", error);
     }
+    try {
+      await deletePost(post._id).unwrap();
+      console.log("Post deleted");
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
   };
+
+  if (!post) return null;
 
   return (
     <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative group">
@@ -58,21 +80,32 @@ const LatestPostCard = ({ post, showMenu = false }) => {
               Edit
             </Link>
           </button>
+      {/* Admin/User Post Controls */}
+      {showMenu && user?.role && (
+        <div className="hidden group-hover:flex absolute top-2.5 left-2.5 space-x-2.5 transition-all duration-500">
+          <Link
+            to={`/dashboard-${user.role}/edite-post/${post._id}`}
+            className="bg-yellow-400 px-4 py-2 rounded-md"
+          >
+            Edit
+          </Link>
           <button
             onClick={handleDelete}
-            className="bg-red-500 px-4 py-2 rounded-md cursor-pointer"
+            className="bg-red-500 px-4 py-2 rounded-md"
           >
             Delete
           </button>
         </div>
       )}
 
+      {/* Post Image */}
       <img
         src={post.image || "/default.jpg"}
         alt={post.title}
         className="w-full h-48 object-cover"
       />
 
+      {/* Post Info */}
       <div className="p-4 text-white">
         <div className="text-sm text-gray-400 flex justify-between mb-2">
           <span className="uppercase">{post.category || "General"}</span>
@@ -83,7 +116,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           {post.title}
         </h3>
 
-        <div className="flex justify-start space-x-3 text-gray-400 text-sm items-center">
+        <div className="flex flex-wrap gap-4 text-gray-400 text-sm items-center">
           <Link to={`/post/${post._id}`} className="hover:text-white">
             💬 {post.comments?.length || 0} Comments
           </Link>
@@ -91,7 +124,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           <button
             onClick={handleLike}
             disabled={isLoading}
-            className="flex items-center space-x-1 hover:text-red-400 transition"
+            className="flex items-center gap-1 hover:text-red-400"
           >
             <FaHeart
               className={`transition-transform ${
@@ -105,7 +138,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
 
           <button
             onClick={toggleModal}
-            className="flex items-center space-x-1 hover:text-blue-400"
+            className="flex items-center gap-1 hover:text-blue-400"
           >
             <FiShare2 />
             <span>Share</span>
@@ -113,14 +146,15 @@ const LatestPostCard = ({ post, showMenu = false }) => {
         </div>
       </div>
 
+      {/* Share Modal */}
       {showModal && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-md text-black w-[90%] max-w-md">
             <h4 className="text-lg font-semibold mb-2">Share this post</h4>
             <input
               type="text"
-              value={`${window.location.origin}/post/${post._id}`}
               readOnly
+              value={`${window.location.origin}/post/${post._id}`}
               className="w-full p-2 border border-gray-300 rounded-md"
             />
             <div className="flex justify-end mt-3">
@@ -136,6 +170,21 @@ const LatestPostCard = ({ post, showMenu = false }) => {
       )}
     </div>
   );
+};
+
+LatestPostCard.propTypes = {
+  post: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    image: PropTypes.string,
+    category: PropTypes.string,
+    createdAt: PropTypes.string,
+    comments: PropTypes.array,
+    likes: PropTypes.array,
+    views: PropTypes.number,
+  }).isRequired,
+  showMenu: PropTypes.bool,
 };
 
 export default LatestPostCard;
