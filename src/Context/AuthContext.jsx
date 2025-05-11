@@ -7,13 +7,15 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const { data: newToken } = useGetAccessTokenQuery();
   const [login] = useLoginMutation();
 
+  const isValidJwt = (jwt) =>
+    typeof jwt === "string" && jwt.split(".").length === 3;
+
   const decodeToken = (token) => {
     try {
-      if (typeof token === "string" && token.split(".").length === 3) {
+      if (isValidJwt(token)) {
         return jwtDecode(token);
       }
       console.warn("Invalid or malformed token:", token);
@@ -23,62 +25,24 @@ export const AuthProvider = ({ children }) => {
     return null;
   };
 
-  const isValidJwt = (jwt) =>
-    typeof jwt === "string" && jwt.split(".").length === 3;
-  // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
-
-  const isValidJwt = (jwt) =>
-    typeof jwt === "string" && jwt.split(".").length === 3;
-
   useEffect(() => {
     const handleToken = () => {
       const storedToken = localStorage.getItem("accessToken");
       let decodedUser = decodeToken(storedToken);
 
       if (decodedUser) {
-    try {
-      if (token && isValidJwt(token)) {
-        const user = jwtDecode(token);
         const currentTime = Date.now() / 1000;
-        if (decodedUser.exp <= currentTime && typeof newToken === "string") {
 
-        if (user.exp <= currentTime && newToken && isValidJwt(newToken)) {
+        if (decodedUser.exp <= currentTime && typeof newToken === "string" && isValidJwt(newToken)) {
           localStorage.setItem("accessToken", newToken);
           decodedUser = decodeToken(newToken);
         }
-
-        try {
-          if (token && isValidJwt(token)) {
-            const user = jwtDecode(token);
-            const currentTime = Date.now() / 1000;
-
-            if (user.exp <= currentTime && newToken && isValidJwt(newToken)) {
-              // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
-              localStorage.setItem("accessToken", newToken);
-              decodedUser = decodeToken(newToken);
-            }
-            setUser(decodedUser);
-          } else {
-            setUser(null);
-          }
-        } catch (err) {
-          console.error("Token decoding error:", err);
-          setUser(null);
-        }
-      } else if (typeof newToken === "string") {
+      } else if (typeof newToken === "string" && isValidJwt(newToken)) {
         localStorage.setItem("accessToken", newToken);
         decodedUser = decodeToken(newToken);
-        setUser(decodedUser);
-      } else if (newToken && isValidJwt(newToken)) {
-        // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
-      } else if (newToken && isValidJwt(newToken)) {
-        localStorage.setItem("accessToken", newToken);
-        decodedUser = decodeToken(newToken);
-        setUser(decodedUser);
-      } else {
-        setUser(null);
       }
 
+      setUser(decodedUser || null);
       setLoading(false);
     };
 
@@ -89,7 +53,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     setUser(null);
   };
-
 
   const Login = async (formData) => {
     try {
@@ -106,9 +69,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, userRole: user?.role, logout, loading, Login }}
-    >
     <AuthContext.Provider value={{ user, userRole: user?.role, logout, loading, Login }}>
       {children}
     </AuthContext.Provider>
@@ -116,4 +76,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-

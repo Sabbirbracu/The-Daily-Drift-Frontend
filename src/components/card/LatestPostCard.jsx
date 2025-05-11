@@ -1,24 +1,18 @@
+import PropTypes from "prop-types"; // Optional: Remove if unused
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../features/auth/hooks/useAuth";
-import { useToggleLikeMutation } from "../../features/post/likeApi";
-import { Link, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-import useAuth from "../../features/auth/hooks/useAuth";
-import { useToggleLikeMutation } from "../../features/post/likeApi";
-import { useDeletePostMutation } from "../../features/post/postApi";
+import { useDeletePostMutation, useToggleLikePostMutation } from "../../features/post/postApi";
 
 const LatestPostCard = ({ post, showMenu = false }) => {
   const [likes, setLikes] = useState(post.likes?.length || 0);
   const [liked, setLiked] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [toggleLike, { isLoading }] = useToggleLikeMutation();
+  const [toggleLike, { isLoading }] = useToggleLikePostMutation();
   const { user } = useAuth();
   const [deletePost] = useDeletePostMutation();
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,13 +20,8 @@ const LatestPostCard = ({ post, showMenu = false }) => {
       setLiked(true);
     }
   }, [post.likes, user?.id]);
-    setLiked(user?.id && post.likes?.includes(user.id));
-  }, [post.likes, user?.id]);
 
   const handleLike = async () => {
-    if (!user?.id) {
-      return navigate("/login"); // redirect to login if not logged in
-    }
     if (!user?.id) return navigate("/login");
 
     try {
@@ -42,11 +31,6 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     } catch (err) {
       console.error("Error toggling like:", err);
     }
-  };
-
-  const toggleModal = () => {
-    if (!user?.id) return navigate("/login"); // redirect to login if not logged in
-    setShowModal((prev) => !prev);
   };
 
   const toggleModal = () => {
@@ -61,12 +45,6 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     } catch (error) {
       console.error("Delete failed:", error);
     }
-    try {
-      await deletePost(post._id).unwrap();
-      console.log("Post deleted");
-    } catch (error) {
-      console.error("Delete failed:", error);
-    }
   };
 
   if (!post) return null;
@@ -75,14 +53,6 @@ const LatestPostCard = ({ post, showMenu = false }) => {
     <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative group">
       {showMenu && user?.role && (
         <div className="hidden group-hover:flex transition-all duration-700 absolute top-2.5 left-2.5 space-x-2.5">
-          <button className="bg-yellow-400 px-4 py-2 rounded-md cursor-pointer">
-            <Link to={`/dashboard-${user.role}/edite-post/${post._id}`}>
-              Edit
-            </Link>
-          </button>
-      {/* Admin/User Post Controls */}
-      {showMenu && user?.role && (
-        <div className="hidden group-hover:flex absolute top-2.5 left-2.5 space-x-2.5 transition-all duration-500">
           <Link
             to={`/dashboard-${user.role}/edite-post/${post._id}`}
             className="bg-yellow-400 px-4 py-2 rounded-md"
@@ -91,21 +61,19 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           </Link>
           <button
             onClick={handleDelete}
-            className="bg-red-500 px-4 py-2 rounded-md"
+            className="bg-red-500 px-4 py-2 rounded-md cursor-pointer"
           >
             Delete
           </button>
         </div>
       )}
 
-      {/* Post Image */}
       <img
         src={post.image || "/default.jpg"}
         alt={post.title}
         className="w-full h-48 object-cover"
       />
 
-      {/* Post Info */}
       <div className="p-4 text-white">
         <div className="text-sm text-gray-400 flex justify-between mb-2">
           <span className="uppercase">{post.category || "General"}</span>
@@ -116,7 +84,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           {post.title}
         </h3>
 
-        <div className="flex flex-wrap gap-4 text-gray-400 text-sm items-center">
+        <div className="flex justify-start space-x-3 text-gray-400 text-sm items-center">
           <Link to={`/post/${post._id}`} className="hover:text-white">
             💬 {post.comments?.length || 0} Comments
           </Link>
@@ -124,7 +92,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
           <button
             onClick={handleLike}
             disabled={isLoading}
-            className="flex items-center gap-1 hover:text-red-400"
+            className="flex items-center space-x-1 hover:text-red-400 transition"
           >
             <FaHeart
               className={`transition-transform ${
@@ -138,7 +106,7 @@ const LatestPostCard = ({ post, showMenu = false }) => {
 
           <button
             onClick={toggleModal}
-            className="flex items-center gap-1 hover:text-blue-400"
+            className="flex items-center space-x-1 hover:text-blue-400"
           >
             <FiShare2 />
             <span>Share</span>
@@ -146,15 +114,14 @@ const LatestPostCard = ({ post, showMenu = false }) => {
         </div>
       </div>
 
-      {/* Share Modal */}
       {showModal && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-md text-black w-[90%] max-w-md">
             <h4 className="text-lg font-semibold mb-2">Share this post</h4>
             <input
               type="text"
-              readOnly
               value={`${window.location.origin}/post/${post._id}`}
+              readOnly
               className="w-full p-2 border border-gray-300 rounded-md"
             />
             <div className="flex justify-end mt-3">

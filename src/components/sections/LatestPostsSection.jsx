@@ -1,20 +1,17 @@
 import { LuKanban } from "react-icons/lu";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
-import LatestPostCard from "../card/latestPostCard";
+import LatestPostCard from "../card/LatestPostCard";
 
 const LatestPostSection = () => {
-  const { data, isLoading, isError } = useGetPostsQuery();
   const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
 
   if (isLoading) {
     return <p className="text-white text-center">Loading posts...</p>;
   }
 
-  if (isError || !Array.isArray(data)) {
+  if (isError || !Array.isArray(posts)) {
     return <p className="text-red-500 text-center">Failed to load posts</p>;
   }
-
-  const posts = data.filter((post) => post && post._id); // Ensure valid posts
 
   return (
     <section>

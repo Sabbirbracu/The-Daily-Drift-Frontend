@@ -1,4 +1,3 @@
-import { useGetPostsQuery } from "../../features/post/postApi";
 import { Link } from "react-router-dom"; // or `next/link` if you're using Next.js
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
 

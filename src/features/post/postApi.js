@@ -1,133 +1,3 @@
-// import { createApi } from "@reduxjs/toolkit/query/react";
-// import baseQueryWithReauth from "../auth/Api.js";
-
-// export const postApi = createApi({
-//   reducerPath: "postApi",
-//   baseQuery: baseQueryWithReauth,
-//   tagTypes: ["Post"],
-
-//   endpoints: (builder) => ({
-//     // Get all approved posts (public)
-//     getPosts: builder.query({
-//       query: ({ search } = {}) => ({
-//         url: "/posts",
-//         params: search ? { search } : {},
-//       }),
-//       providesTags: ["Post"],
-//     }),
-
-//     // Get one post by ID
-//     getPostById: builder.query({
-//       query: (id) => `/posts/${id}`,
-//       providesTags: (result, error, id) => [{ type: "Post", id }],
-//     }),
-
-//     // Get current user's posts
-//     getPostByUser: builder.query({
-//       query: () => "/posts/ownPost",
-//       providesTags: ["Post"],
-//     }),
-
-//     // Create a post
-//     createPost: builder.mutation({
-//       query: (data) => ({
-//         url: "/posts",
-//         method: "POST",
-//         body: data,
-//       }),
-//       invalidatesTags: ["Post"],
-//     }),
-
-//     // Update a post
-//     updatePost: builder.mutation({
-//       query: ({ id, data }) => ({
-//         url: `/posts/${id}`,
-//         method: "PUT",
-//         body: data,
-//       }),
-//       invalidatesTags: ["Post"],
-//     }),
-
-//     // Delete a post
-//     deletePost: builder.mutation({
-//       query: (id) => ({
-//         url: `/posts/${id}`,
-//         method: "DELETE",
-//       }),
-//       invalidatesTags: ["Post"],
-//     }),
-
-//     // Like/unlike a post
-//     toggleLikePost: builder.mutation({
-//       query: (id) => ({
-//         url: `/posts/${id}/like`,
-//         method: "POST",
-//       }),
-//       invalidatesTags: (result, error, id) => [{ type: "Post", id }],
-//     }),
-
-//     // Get like count
-//     getPostLikes: builder.query({
-//       query: (id) => `/posts/${id}/likes`,
-//       providesTags: (result, error, id) => [{ type: "Post", id }],
-//     }),
-
-//     // Vote in poll
-//     votePoll: builder.mutation({
-//       query: ({ postId, pollId, optionIndex }) => ({
-//         url: `/posts/${postId}/poll/${pollId}/vote`,
-//         method: "POST",
-//         body: { optionIndex },
-//       }),
-//       invalidatesTags: (result, error, { postId }) => [{ type: "Post", id: postId }],
-//     }),
-
-//     // Admin: get pending posts
-//     getPendingPosts: builder.query({
-//       query: () => `/posts/admin/pending`,
-//       providesTags: ["Post"],
-//     }),
-
-//     // Admin: approve post
-//     approvePost: builder.mutation({
-//       query: (id) => ({
-//         url: `/posts/${id}/approve`,
-//         method: "PATCH",
-//       }),
-//       invalidatesTags: ["Post"],
-//     }),
-
-//     // Admin: decline post
-//     declinePost: builder.mutation({
-//       query: (id) => ({
-//         url: `/posts/${id}/decline`,
-//         method: "PATCH",
-//       }),
-//       invalidatesTags: ["Post"],
-//     }),
-//   }),
-// });
-
-// export const {
-//   useGetPostsQuery,
-//   useGetPostByIdQuery,
-//   useGetPostByUserQuery,
-//   useCreatePostMutation,
-//   useUpdatePostMutation,
-//   useDeletePostMutation,
-//   useToggleLikePostMutation,
-//   useGetPostLikesQuery,
-//   useVotePollMutation,
-//   useGetPendingPostsQuery,
-//   useApprovePostMutation,
-//   useDeclinePostMutation,
-// } = postApi;
-
-
-
-
-// 
-
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "../auth/Api.js";
 
@@ -137,14 +7,8 @@ export const postApi = createApi({
   tagTypes: ["Post"],
 
   endpoints: (builder) => ({
-    // ✅ GET all posts for public/all post listing
     // Get posts by optional status or search (approved, pending, declined)
     getPosts: builder.query({
-      query: () => "/posts",
-      providesTags: (result) =>
-        result
-          ? [...result.map(({ _id }) => ({ type: "Post", id: _id })), "Post"]
-          : ["Post"],
       query: ({ search = "", status } = {}) => ({
         url: "/posts",
         params: { search, status },
@@ -155,30 +19,23 @@ export const postApi = createApi({
     // Get only approved posts (public access for Home page)
     getPublicPosts: builder.query({
       query: (search = "") => ({
-        url: "/posts/publicPosts",  // New publicPosts route
-        params: { search },  // Optional search query
+        url: "/posts/publicPosts",
+        params: { search },
       }),
       providesTags: ["Post"],
     }),
 
-    // ✅ GET single post by ID
-
     // Get single post by ID
     getPostById: builder.query({
-      query: (id) => `/posts/${id}`,
       query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
-    // ✅ GET posts for logged-in user
     // Get current user's posts
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
       providesTags: ["Post"],
-      providesTags: ["Post"],
     }),
-
-    // ✅ CREATE a new post
 
     // Create post
     createPost: builder.mutation({
@@ -187,10 +44,6 @@ export const postApi = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Post"],
-    }),
-
-    // ✅ DELETE a post
       invalidatesTags: ["Post"],
     }),
 
@@ -210,16 +63,6 @@ export const postApi = createApi({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Post"],
-    }),
-
-    // ✅ SUSPEND a post (admin only)
-    suspendPost: builder.mutation({
-      query: (postId) => ({
-        url: `/admin/posts/${postId}/suspend`,
-        method: "PUT",
-      }),
-      invalidatesTags: ["Post"],
       invalidatesTags: ["Post"],
     }),
 
@@ -270,7 +113,7 @@ export const postApi = createApi({
 
 export const {
   useGetPostsQuery,
-  useGetPublicPostsQuery,  // New hook for public posts
+  useGetPublicPostsQuery,
   useGetPostByIdQuery,
   useGetPostByUserQuery,
   useCreatePostMutation,
@@ -284,12 +127,3 @@ export const {
 } = postApi;
 
 export const postReducer = postApi.reducer;
-
-export const {
-  getPosts,
-  getPostById,
-  getPostByUser,
-  createPost,
-  suspendPost,
-  deletePost,
-} = postApi.endpoints;
