@@ -15,10 +15,8 @@ import AdminLayout from "../layouts/AdminLayouts.jsx";
 import UserLayout from "../layouts/UserLayout.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 import About from "../components/about.jsx";
-import Contact from "../pages/contact.jsx"; // Adjust the path as necessary
-
-// Within your Routes component
-<Route path="/contact" element={<Contact />} />;
+import Contact from "../Pages/contact.jsx";
+import AllPosts from "../Pages/AllPosts.jsx"; // ✅ Corrected path
 
 const AppRoutes = () => {
   return (
@@ -27,10 +25,10 @@ const AppRoutes = () => {
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-
+          <Route path="/posts" element={<AllPosts />} /> {/* ✅ New route */}
           {/* user routes */}
           <Route path="/dashboard-user" element={<UserLayout />}>
             <Route index element={<UserDashboard />} />
@@ -40,7 +38,6 @@ const AppRoutes = () => {
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
           </Route>
-
           {/* Admin Routes */}
           <Route
             path="/dashboard-admin"

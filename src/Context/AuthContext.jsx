@@ -26,6 +26,10 @@ export const AuthProvider = ({ children }) => {
     return null;
   };
 
+  const isValidJwt = (jwt) =>
+    typeof jwt === "string" && jwt.split(".").length === 3;
+  // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
+
   useEffect(() => {
     const handleToken = () => {
       const storedToken = localStorage.getItem("accessToken");
@@ -37,8 +41,31 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("accessToken", newToken);
           decodedUser = decodeToken(newToken);
         }
-        setUser(decodedUser);
+
+        try {
+          if (token && isValidJwt(token)) {
+            const user = jwtDecode(token);
+            const currentTime = Date.now() / 1000;
+
+            if (user.exp <= currentTime && newToken && isValidJwt(newToken)) {
+              // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
+              localStorage.setItem("accessToken", newToken);
+              decodedUser = decodeToken(newToken);
+            }
+            setUser(decodedUser);
+          } else {
+            setUser(null);
+          }
+        } catch (err) {
+          console.error("Token decoding error:", err);
+          setUser(null);
+        }
       } else if (typeof newToken === "string") {
+        localStorage.setItem("accessToken", newToken);
+        decodedUser = decodeToken(newToken);
+        setUser(decodedUser);
+      } else if (newToken && isValidJwt(newToken)) {
+        // 9cea75187eeae6f5d62eb67c4ec0cab74a4e6162
         localStorage.setItem("accessToken", newToken);
         decodedUser = decodeToken(newToken);
         setUser(decodedUser);
@@ -72,8 +99,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, loading, Login }}>
+    <AuthContext.Provider
+      value={{ user, userRole: user?.role, logout, loading, Login }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

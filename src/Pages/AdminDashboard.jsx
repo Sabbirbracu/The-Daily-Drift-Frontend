@@ -1,21 +1,38 @@
-import React from 'react';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import LineChartComponent from '../components/LineChartComponent';
 import PieChartComponent from '../components/PieChartComponent';
 import StatCard from '../components/card/StatCard';
-import { useGetAdminOverviewStatsQuery, useGetRoleDistributionStatsQuery } from '../features/Admin/adminApi';
+import {
+  useGetAdminOverviewStatsQuery,
+  useGetRoleDistributionStatsQuery,
+} from '../features/Admin/adminApi';
 
 const AdminDashboard = () => {
+  // ✅ Listen to the trigger from Redux
+  const refetchTrigger = useSelector((state) => state.dashboard.refetchTrigger);
+
+  // Admin stats query
   const {
     data: statsData,
     isLoading: statsLoading,
     isError: statsError,
+    refetch: refetchStats,
   } = useGetAdminOverviewStatsQuery();
 
+  // Role distribution query
   const {
     data: roleData,
     isLoading: roleLoading,
     isError: roleError,
+    refetch: refetchRoles,
   } = useGetRoleDistributionStatsQuery();
+
+  // ✅ Automatically refetch when the trigger changes
+  useEffect(() => {
+    refetchStats();
+    refetchRoles();
+  }, [refetchTrigger]);
 
   return (
     <div className="p-6">
@@ -27,28 +44,28 @@ const AdminDashboard = () => {
           title="Total Users"
           value={statsLoading ? '...' : statsData?.totalUsers}
           icon="users"
-          bgColor="bg-blue-100" 
+          bgColor="bg-blue-100"
           textColor="text-blue-800"
         />
         <StatCard
           title="Total Posts"
           value={statsLoading ? '...' : statsData?.totalPosts}
           icon="file-text"
-          bgColor="bg-green-100" 
+          bgColor="bg-green-100"
           textColor="text-green-800"
         />
         <StatCard
           title="Total Comments"
           value={statsLoading ? '...' : statsData?.totalComments}
           icon="message-circle"
-          bgColor="bg-yellow-100" 
+          bgColor="bg-yellow-100"
           textColor="text-yellow-800"
         />
         <StatCard
           title="Suspended Users"
           value={statsLoading ? '...' : statsData?.suspendedUsers}
           icon="user-x"
-          bgColor="bg-red-100" 
+          bgColor="bg-red-100"
           textColor="text-red-800"
         />
       </div>
@@ -67,7 +84,6 @@ const AdminDashboard = () => {
           yKey="users"
         />
 
-        {/* Pie Chart for Role Distribution */}
         <PieChartComponent
           title="User Role Distribution"
           data={
