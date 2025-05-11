@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { useGetPostsQuery } from "../../features/post/postApi";
+import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import PostCard from "../postCard";
 import { LuKanban } from "react-icons/lu";
 
 const FeaturedCategorySection = () => {
-  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
   const [activeCategory, setActiveCategory] = useState(null);
 
   

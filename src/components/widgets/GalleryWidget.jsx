@@ -1,7 +1,7 @@
-import { useGetPostsQuery } from "../../features/post/postApi";
+import { useGetPublicPostsQuery } from "../../features/post/postApi";
 
 const GalleryWidget = () => {
-  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
 
   if (isLoading) return <p className="text-white text-center">Loading gallery...</p>;
   if (isError) return <p className="text-red-500 text-center">Failed to load gallery</p>;

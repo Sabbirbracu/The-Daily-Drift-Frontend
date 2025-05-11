@@ -53,12 +53,12 @@
 
 
 import { LuKanban } from "react-icons/lu";
-import { useGetPostsQuery } from "../../features/post/postApi";
+import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import ListPostCard from "../card/ListPostCard";
 import PostCard from "../postCard";
 
 const FeaturedPostsSection = () => {
-  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
 
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (isError) return <p className="text-red-500">Failed to load featured posts</p>;

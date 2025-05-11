@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import PostCard from "../components/postCard";
-import { useGetPostsQuery } from "../features/post/postApi";
+import { useGetPublicPostsQuery } from "../features/post/postApi";
 
 const Carousel = () => {
-  const { data: posts, isLoading, isError } = useGetPostsQuery();
+  const { data: posts, isLoading, isError } = useGetPublicPostsQuery();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToNext = () => {

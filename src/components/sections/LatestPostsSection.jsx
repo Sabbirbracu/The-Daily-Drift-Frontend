@@ -1,9 +1,9 @@
 import { LuKanban } from "react-icons/lu";
-import { useGetPostsQuery } from "../../features/post/postApi";
+import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import LatestPostCard from "../card/latestPostCard";
 
 const LatestPostSection = () => {
-  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
 
   if (isLoading) return <p className="text-white text-center">Loading posts...</p>;
   if (isError) return <p className="text-red-500 text-center">Failed to load posts</p>;

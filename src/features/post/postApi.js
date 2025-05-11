@@ -146,6 +146,15 @@ export const postApi = createApi({
       providesTags: ["Post"],
     }),
 
+    // Get only approved posts (public access for Home page)
+    getPublicPosts: builder.query({
+      query: (search = "") => ({
+        url: "/posts/publicPosts",  // New publicPosts route
+        params: { search },  // Optional search query
+      }),
+      providesTags: ["Post"],
+    }),
+
     // Get single post by ID
     getPostById: builder.query({
       query: (id) => `/posts/${id}`,
@@ -234,6 +243,7 @@ export const postApi = createApi({
 
 export const {
   useGetPostsQuery,
+  useGetPublicPostsQuery,  // New hook for public posts
   useGetPostByIdQuery,
   useGetPostByUserQuery,
   useCreatePostMutation,

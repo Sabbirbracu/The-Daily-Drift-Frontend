@@ -1,8 +1,8 @@
-import { useGetPostsQuery } from "../../features/post/postApi";
+import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import ListPostCard from "../card/ListPostCard";
 
 const PopularPostWidget = () => {
-  const { data: posts = [], isLoading, isError } = useGetPostsQuery();
+  const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
 
   if (isLoading) return <p className="text-white text-center">Loading popular posts...</p>;
   if (isError) return <p className="text-red-500 text-center">Failed to load popular posts</p>;
