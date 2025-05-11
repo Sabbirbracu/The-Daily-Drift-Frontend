@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import ProfileMenu from "../components/ProfileMenu";
 import Sidebar from "../components/Sidebar";
 import useAuth from "../features/auth/hooks/useAuth";
 
@@ -24,11 +23,6 @@ const UserDashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      {/* Top Navbar */}
-      <header className="flex justify-between items-center px-6 py-4 bg-gray-800 shadow">
-        <h1 className="text-2xl font-bold">The Daily Drift</h1>
-        <ProfileMenu />
-      </header> */}
 
       <div className="flex flex-1">
         {/* Sidebar */}

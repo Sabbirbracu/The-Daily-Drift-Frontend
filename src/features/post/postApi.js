@@ -7,7 +7,7 @@ export const postApi = createApi({
   tagTypes: ["Post", "ownPost"],
 
   endpoints: (builder) => ({
-    // Get posts by optional status or search (approved, pending, declined)
+    // Get posts by optional status or search
     getPosts: builder.query({
       query: ({ search = "", status } = {}) => ({
         url: "/posts",
@@ -16,7 +16,7 @@ export const postApi = createApi({
       providesTags: ["Post"],
     }),
 
-    // Get only approved posts (public access for Home page)
+    // Public posts (for Home page)
     getPublicPosts: builder.query({
       query: (search = "") => ({
         url: "/posts/publicPosts",
@@ -28,14 +28,12 @@ export const postApi = createApi({
     // Get single post by ID
     getPostById: builder.query({
       query: (id) => `/posts/${id}`,
-      query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
     // Get current user's posts
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
-
       providesTags: (result) =>
         Array.isArray(result?.data)
           ? [
@@ -43,9 +41,7 @@ export const postApi = createApi({
               { type: "ownPost", id: "LIST" },
             ]
           : [{ type: "ownPost", id: "LIST" }],
-      providesTags: ["Post"],
     }),
-
 
     // Create post
     createPost: builder.mutation({
@@ -56,29 +52,10 @@ export const postApi = createApi({
       }),
       invalidatesTags: ["Post", "ownPost"],
     }),
-      invalidatesTags: ["Post"],
-    }),
 
     // Update post
     updatePost: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/posts/${id}`,
-        method: "PUT",
-        body: data,
-      }),
-      invalidatesTags: ["Post"],
-    }),
-
-    // Delete post
-    deletePost: builder.mutation({
-      query: (id) => ({
-        url: `/posts/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Post", "ownPost"],
-    }),
-    updatePost: builder.mutation({
-      query: ({ id, ...data }) => ({
         url: `/posts/${id}`,
         method: "PUT",
         body: data,
@@ -88,7 +65,15 @@ export const postApi = createApi({
         { type: "ownPost", id },
         { type: "ownPost", id: "LIST" },
       ],
-      invalidatesTags: ["Post"],
+    }),
+
+    // Delete post
+    deletePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Post", "ownPost"],
     }),
 
     // Like or unlike post
@@ -144,7 +129,6 @@ export const {
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
-  useUpdatePostMutation,
   useToggleLikePostMutation,
   useGetPostLikesQuery,
   useVotePollMutation,
