@@ -28,6 +28,9 @@ const CreatePost = ({ post = null }) => {
     image: "",
     content: "<p>Write your content here...</p>",
   });
+  const url = import.meta.env.VITE_CLOUDINARY_URL;
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
+  const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   const fileInputRef = useRef(null);
 
@@ -54,17 +57,14 @@ const CreatePost = ({ post = null }) => {
   const uploadImgToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "the_daily_drift");
-    formData.append("cloud_name", "dvfxdetcl");
+    formData.append("upload_preset", preset);
+    formData.append("cloud_name", cloudName);
 
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dvfxdetcl/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
       const result = await res.json();
       return result.secure_url;
     } catch (error) {

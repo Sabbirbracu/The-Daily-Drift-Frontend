@@ -27,10 +27,11 @@ export const postApi = createApi({
     }),
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
+
       providesTags: (result) =>
-        result
+        Array.isArray(result?.data)
           ? [
-              ...result.map(({ _id }) => ({ type: "ownPost", id: _id })),
+              ...result.data.map(({ _id }) => ({ type: "ownPost", id: _id })),
               { type: "ownPost", id: "LIST" },
             ]
           : [{ type: "ownPost", id: "LIST" }],
