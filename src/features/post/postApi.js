@@ -4,7 +4,7 @@ import baseQueryWithReauth from "../auth/Api.js";
 export const postApi = createApi({
   reducerPath: "postApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Post"],
+  tagTypes: ["Post", "ownPost"],
 
   endpoints: (builder) => ({
     // Get posts by optional status or search (approved, pending, declined)
@@ -28,14 +28,24 @@ export const postApi = createApi({
     // Get single post by ID
     getPostById: builder.query({
       query: (id) => `/posts/${id}`,
+      query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
     // Get current user's posts
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
+
+      providesTags: (result) =>
+        Array.isArray(result?.data)
+          ? [
+              ...result.data.map(({ _id }) => ({ type: "ownPost", id: _id })),
+              { type: "ownPost", id: "LIST" },
+            ]
+          : [{ type: "ownPost", id: "LIST" }],
       providesTags: ["Post"],
     }),
+
 
     // Create post
     createPost: builder.mutation({
@@ -44,6 +54,8 @@ export const postApi = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Post", "ownPost"],
+    }),
       invalidatesTags: ["Post"],
     }),
 
@@ -63,6 +75,19 @@ export const postApi = createApi({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Post", "ownPost"],
+    }),
+    updatePost: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/posts/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Post", id },
+        { type: "ownPost", id },
+        { type: "ownPost", id: "LIST" },
+      ],
       invalidatesTags: ["Post"],
     }),
 
@@ -119,6 +144,7 @@ export const {
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useUpdatePostMutation,
   useToggleLikePostMutation,
   useGetPostLikesQuery,
   useVotePollMutation,

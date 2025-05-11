@@ -1,11 +1,9 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import baseQueryWithReauth from "../auth/Api";
 
 export const commentApi = createApi({
   reducerPath: "commentApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/admin",
-    credentials: "include",
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ["Comment"],
   endpoints: (builder) => ({
     suspendComment: builder.mutation({
@@ -15,7 +13,21 @@ export const commentApi = createApi({
       }),
       invalidatesTags: ["Comment"],
     }),
+    getCommtents: builder.query({
+      query: (postId) => `/comments/${postId}`,
+    }),
+    createComment: builder.mutation({
+      query: (postId, ...comment) => ({
+        url: `/comments/${postId}`,
+        method: "POST",
+        body: comment,
+      }),
+    }),
   }),
 });
 
-export const { useSuspendCommentMutation } = commentApi;
+export const {
+  useSuspendCommentMutation,
+  useGetCommtentsQuery,
+  useCreateCommentMutation,
+} = commentApi;

@@ -2,7 +2,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 
-const MobileNavItem = ({ categories }) => {
+const MobileNavItem = ({ categories, setMenuOpen }) => {
   const { user } = useAuth() || {};
   const getUrl = (category) => {
     if (category.toLowerCase() === "home") return "/";
@@ -13,6 +13,7 @@ const MobileNavItem = ({ categories }) => {
     <ul className="lg:hidden min-h-screen mt-4 space-y-5 text-center ">
       {categories.map((category) => (
         <li
+          onClick={() => setMenuOpen((prev) => !prev)}
           key={category}
           className="hover:text-red-400 cursor-pointer transition text-sm md:text-base"
         >

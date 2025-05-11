@@ -8,27 +8,29 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Toolbar from "../components/Toolbar";
 import useAuth from "../features/auth/hooks/useAuth";
-import { useCreatePostMutation } from "../features/post/postApi";
+import {
+  useCreatePostMutation,
+  useUpdatePostMutation,
+} from "../features/post/postApi";
 
 const CreatePost = ({ post = null }) => {
   const navigate = useNavigate();
-  const { userRole } = useAuth();
+  const { user } = useAuth();
   const [createPost, { isLoading }] = useCreatePostMutation();
+  const [updatePost] = useUpdatePostMutation();
   const [data, setData] = useState({
     title: "",
     category: "",
     image: "",
     content: "<p>Write your content here...</p>",
   });
-  useEffect(() => {
-    if (post) {
-      setData(post);
-    }
-  }, [post]);
+  const url = import.meta.env.VITE_CLOUDINARY_URL;
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
+  const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   const fileInputRef = useRef(null);
 
@@ -55,17 +57,14 @@ const CreatePost = ({ post = null }) => {
   const uploadImgToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "the_daily_drift");
-    formData.append("cloud_name", "dvfxdetcl");
+    formData.append("upload_preset", preset);
+    formData.append("cloud_name", cloudName);
 
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dvfxdetcl/image/upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
       const result = await res.json();
       return result.secure_url;
     } catch (error) {
@@ -106,7 +105,13 @@ const CreatePost = ({ post = null }) => {
       const content = editor.getHTML();
       const finalData = { ...data, content };
       setData(finalData);
-      const result = await createPost(finalData).unwrap();
+      let result;
+      if (post) {
+        console.log("🚀 ~ CreatePost ~ post:", post._id);
+        result = await updatePost({ id: post._id, ...finalData }).unwrap();
+      } else {
+        result = await createPost(finalData).unwrap();
+      }
       if (result) {
         setData({
           title: "",
@@ -115,8 +120,10 @@ const CreatePost = ({ post = null }) => {
           content: "",
         });
         editor.commands.setContent("<p>Write your content here...</p>");
-        console.log("post created successfully");
-        navigate(`/dashboard-${userRole}/post`);
+        console.log(
+          post ? "post created successfully" : "post updated successfully"
+        );
+        navigate(`/dashboard-${user.role}/post`);
       } else {
         console.log("post create fail");
       }
@@ -124,6 +131,19 @@ const CreatePost = ({ post = null }) => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (post) {
+      setData({
+        title: post.title,
+        category: post.category,
+        image: post.image,
+        content: post.content,
+      });
+      if (editor) {
+        editor.commands.setContent(post.content);
+      }
+    }
+  }, [post, editor]);
 
   if (!editor) return <div>Loading Editor...</div>;
 
@@ -186,8 +206,7 @@ const CreatePost = ({ post = null }) => {
         onClick={handleSubmit}
         className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {isLoading && "Submiting...."}
-        Submit
+        {isLoading ? "Submiting...." : "Submit"}
       </button>
     </div>
   );

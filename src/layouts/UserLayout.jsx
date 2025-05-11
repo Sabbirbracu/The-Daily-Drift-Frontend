@@ -28,7 +28,7 @@ const UserDashboard = () => {
       <header className="flex justify-between items-center px-6 py-4 bg-gray-800 shadow">
         <h1 className="text-2xl font-bold">The Daily Drift</h1>
         <ProfileMenu />
-      </header>
+      </header> */}
 
       <div className="flex flex-1">
         {/* Sidebar */}

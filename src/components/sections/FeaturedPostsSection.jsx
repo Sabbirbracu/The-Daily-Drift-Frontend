@@ -78,10 +78,10 @@ const FeaturedPostsSection = () => {
         <div className="lg:col-span-2 group relative overflow-hidden rounded-2xl min-h-[280px]">
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0 transition-all group-hover:brightness-110" />
           <PostCard
-            title={mainPost.title}
-            image={mainPost.image}
-            content={mainPost.content}
-            category={mainPost.category}
+            title={mainPost?.title}
+            image={mainPost?.image}
+            content={mainPost?.content}
+            category={mainPost?.category}
           />
         </div>
 
@@ -89,11 +89,11 @@ const FeaturedPostsSection = () => {
         <div className="space-y-6">
           {sidePosts.map((post) => (
             <ListPostCard
-              key={post._id}
-              title={post.title}
-              image={post.image}
-              category={post.category}
-              createdAt={post.createdAt}
+              key={post?._id}
+              title={post?.title}
+              image={post?.image}
+              category={post?.category}
+              createdAt={post?.createdAt}
             />
           ))}
         </div>

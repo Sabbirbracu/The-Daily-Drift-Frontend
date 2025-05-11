@@ -1,11 +1,12 @@
-import { FaUserCircle } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
 
 const NavItem = ({ categories }) => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const getUrl = (category) => {
@@ -50,7 +51,7 @@ const NavItem = ({ categories }) => {
         )}
 
         {user && dropdownOpen && (
-          <ul className="absolute top-10 right-0 bg-white text-black shadow-lg py-2 rounded w-40 z-50">
+          <ul className="absolute top-9 right-0 bg-white text-black shadow-lg py-2 rounded w-40 z-50">
             <li className="hover:bg-gray-200 px-4 py-2">
               <Link
                 to={
@@ -61,22 +62,26 @@ const NavItem = ({ categories }) => {
               </Link>
             </li>
             <li className="hover:bg-gray-200 px-4 py-2">
-              <Link to="/create-post">Create Post</Link>
+              <Link to="/dahboard-user/create-post">Create Post</Link>
             </li>
             <li className="hover:bg-gray-200 px-4 py-2">
-              <Link to="/profile">User Profile</Link>
+              <Link to={`/dashboard-${user.role}/profile`}>User Profile</Link>
             </li>
             <li className="hover:bg-gray-200 px-4 py-2">
-              <Link to="/settings">Settings</Link>
+              <Link to={`/dashboard-${user.role}/settings`}>Settings</Link>
             </li>
             <li
-              className={`hover:bg-red-100 px-4 py-2 ${
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+              className={`hover:bg-red-100 px-4 py-2 cursor-pointer ${
                 isActive("/logout")
                   ? "text-red-600 font-semibold"
                   : "text-red-500"
               }`}
             >
-              <Link to="/logout">Logout</Link>
+              Logout
             </li>
           </ul>
         )}
