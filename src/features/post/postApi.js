@@ -1,51 +1,233 @@
+// import { createApi } from "@reduxjs/toolkit/query/react";
+// import baseQueryWithReauth from "../auth/Api.js";
+
+// export const postApi = createApi({
+//   reducerPath: "postApi",
+//   baseQuery: baseQueryWithReauth,
+//   tagTypes: ["Post"],
+
+//   endpoints: (builder) => ({
+//     // Get all approved posts (public)
+//     getPosts: builder.query({
+//       query: ({ search } = {}) => ({
+//         url: "/posts",
+//         params: search ? { search } : {},
+//       }),
+//       providesTags: ["Post"],
+//     }),
+
+//     // Get one post by ID
+//     getPostById: builder.query({
+//       query: (id) => `/posts/${id}`,
+//       providesTags: (result, error, id) => [{ type: "Post", id }],
+//     }),
+
+//     // Get current user's posts
+//     getPostByUser: builder.query({
+//       query: () => "/posts/ownPost",
+//       providesTags: ["Post"],
+//     }),
+
+//     // Create a post
+//     createPost: builder.mutation({
+//       query: (data) => ({
+//         url: "/posts",
+//         method: "POST",
+//         body: data,
+//       }),
+//       invalidatesTags: ["Post"],
+//     }),
+
+//     // Update a post
+//     updatePost: builder.mutation({
+//       query: ({ id, data }) => ({
+//         url: `/posts/${id}`,
+//         method: "PUT",
+//         body: data,
+//       }),
+//       invalidatesTags: ["Post"],
+//     }),
+
+//     // Delete a post
+//     deletePost: builder.mutation({
+//       query: (id) => ({
+//         url: `/posts/${id}`,
+//         method: "DELETE",
+//       }),
+//       invalidatesTags: ["Post"],
+//     }),
+
+//     // Like/unlike a post
+//     toggleLikePost: builder.mutation({
+//       query: (id) => ({
+//         url: `/posts/${id}/like`,
+//         method: "POST",
+//       }),
+//       invalidatesTags: (result, error, id) => [{ type: "Post", id }],
+//     }),
+
+//     // Get like count
+//     getPostLikes: builder.query({
+//       query: (id) => `/posts/${id}/likes`,
+//       providesTags: (result, error, id) => [{ type: "Post", id }],
+//     }),
+
+//     // Vote in poll
+//     votePoll: builder.mutation({
+//       query: ({ postId, pollId, optionIndex }) => ({
+//         url: `/posts/${postId}/poll/${pollId}/vote`,
+//         method: "POST",
+//         body: { optionIndex },
+//       }),
+//       invalidatesTags: (result, error, { postId }) => [{ type: "Post", id: postId }],
+//     }),
+
+//     // Admin: get pending posts
+//     getPendingPosts: builder.query({
+//       query: () => `/posts/admin/pending`,
+//       providesTags: ["Post"],
+//     }),
+
+//     // Admin: approve post
+//     approvePost: builder.mutation({
+//       query: (id) => ({
+//         url: `/posts/${id}/approve`,
+//         method: "PATCH",
+//       }),
+//       invalidatesTags: ["Post"],
+//     }),
+
+//     // Admin: decline post
+//     declinePost: builder.mutation({
+//       query: (id) => ({
+//         url: `/posts/${id}/decline`,
+//         method: "PATCH",
+//       }),
+//       invalidatesTags: ["Post"],
+//     }),
+//   }),
+// });
+
+// export const {
+//   useGetPostsQuery,
+//   useGetPostByIdQuery,
+//   useGetPostByUserQuery,
+//   useCreatePostMutation,
+//   useUpdatePostMutation,
+//   useDeletePostMutation,
+//   useToggleLikePostMutation,
+//   useGetPostLikesQuery,
+//   useVotePollMutation,
+//   useGetPendingPostsQuery,
+//   useApprovePostMutation,
+//   useDeclinePostMutation,
+// } = postApi;
+
+
+
+
+// 
+
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "../auth/Api.js";
 
-// Define your API
 export const postApi = createApi({
   reducerPath: "postApi",
   baseQuery: baseQueryWithReauth,
   tagTypes: ["Post"],
 
   endpoints: (builder) => ({
+    // Get posts by optional status or search (approved, pending, declined)
     getPosts: builder.query({
-      query: () => "/posts",
-      providesTags: ["Post"], // Tagging posts so cache can be invalidated on changes
+      query: ({ search = "", status } = {}) => ({
+        url: "/posts",
+        params: { search, status },
+      }),
+      providesTags: ["Post"],
     }),
 
+    // Get single post by ID
     getPostById: builder.query({
       query: (id) => `/posts/${id}`,
       providesTags: (result, error, id) => [{ type: "Post", id }],
     }),
 
-    suspendPost: builder.mutation({
-      query: (postId) => ({
-        url: `/admin/posts/${postId}/suspend`,
-        method: "PUT",
-      }),
-      invalidatesTags: ["Post"], // Invalidate post list when a post is suspended
-    }),
-
+    // Get current user's posts
     getPostByUser: builder.query({
       query: () => "/posts/ownPost",
-      providesTags: ["Post"], // Added: So user dashboard post list gets refreshed on changes
+      providesTags: ["Post"],
     }),
 
+    // Create post
     createPost: builder.mutation({
       query: (data) => ({
         url: "/posts",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Post"], // Optional: Add this if you want to auto-refresh after post creation
+      invalidatesTags: ["Post"],
     }),
 
+    // Update post
+    updatePost: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/posts/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Post"],
+    }),
+
+    // Delete post
     deletePost: builder.mutation({
       query: (id) => ({
         url: `/posts/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Post"], //  Added: To auto-refetch posts after delete
+      invalidatesTags: ["Post"],
+    }),
+
+    // Like or unlike post
+    toggleLikePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}/like`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Post", id }],
+    }),
+
+    // Get post like count
+    getPostLikes: builder.query({
+      query: (id) => `/posts/${id}/likes`,
+      providesTags: (result, error, id) => [{ type: "Post", id }],
+    }),
+
+    // Vote in a poll
+    votePoll: builder.mutation({
+      query: ({ postId, pollId, optionIndex }) => ({
+        url: `/posts/${postId}/poll/${pollId}/vote`,
+        method: "POST",
+        body: { optionIndex },
+      }),
+      invalidatesTags: (result, error, { postId }) => [{ type: "Post", id: postId }],
+    }),
+
+    // Admin: approve post
+    approvePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}/approve`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Post"],
+    }),
+
+    // Admin: decline post
+    declinePost: builder.mutation({
+      query: (id) => ({
+        url: `/posts/${id}/decline`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Post"],
     }),
   }),
 });
@@ -55,6 +237,11 @@ export const {
   useGetPostByIdQuery,
   useGetPostByUserQuery,
   useCreatePostMutation,
-  useSuspendPostMutation,
+  useUpdatePostMutation,
   useDeletePostMutation,
+  useToggleLikePostMutation,
+  useGetPostLikesQuery,
+  useVotePollMutation,
+  useApprovePostMutation,
+  useDeclinePostMutation,
 } = postApi;

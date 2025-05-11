@@ -95,7 +95,7 @@ const ManageUser = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Manage Users</h2>
+      <h2 className="text-4xl font-bold mb-6 text-white text-center">Manage Users</h2>
       <Table
         columns={["Name", "Email", "Role", "Admin", "Suspended"]}
         data={transformedUsers}
