@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://the-daily-drift-backend-1.onrender.com/api',
+    baseUrl: import.meta.env.VITE_API_BASE_URL + "/api",
     prepareHeaders: (headers, { getState }) => {
       const token = localStorage.getItem('accessToken');
       if (token) {

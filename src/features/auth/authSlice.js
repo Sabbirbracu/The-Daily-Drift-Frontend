@@ -29,7 +29,7 @@ export default authSlice.reducer;
 export const AuthSlice = createApi({
   reducerPath: 'AuthSlice',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://the-daily-drift-backend-1.onrender.com/api',
+    baseUrl: import.meta.env.VITE_API_BASE_URL + "/api",
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = getToken();

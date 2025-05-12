@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const newsletterApi = createApi({
   reducerPath: 'newsletterApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://the-daily-drift-backend-1.onrender.com/api', 
+    baseUrl: import.meta.env.VITE_API_BASE_URL + "/api", 
   }),
   endpoints: (builder) => ({
     subscribeToNewsletter: builder.mutation({
