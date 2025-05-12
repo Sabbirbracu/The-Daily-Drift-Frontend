@@ -6,7 +6,7 @@ import StatCard from '../components/card/StatCard';
 import {
   useGetAdminOverviewStatsQuery,
   useGetRoleDistributionStatsQuery,
-} from '../features/Admin/adminApi';
+} from '../features/admin/adminApi';
 
 const AdminDashboard = () => {
   // ✅ Listen to the trigger from Redux
