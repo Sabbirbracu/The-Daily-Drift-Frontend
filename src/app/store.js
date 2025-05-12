@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { adminApi } from '../features/Admin/adminApi';
+import { adminApi } from '../features/admin/adminApi';
 import { AuthSlice } from '../features/auth/authSlice';
 import { commentApi } from '../features/comment/commentApi';
 import dashboardReducer from '../features/dashboard/dashboardSlice';
