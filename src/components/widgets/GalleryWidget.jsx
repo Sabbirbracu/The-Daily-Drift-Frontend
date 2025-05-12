@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"; // or `next/link` if you're using Next.js
+import { Link } from "react-router-dom";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
 
 const GalleryWidget = () => {
@@ -27,12 +27,12 @@ const GalleryWidget = () => {
       <div className="grid grid-cols-3 gap-2">
         {galleryPosts.map((post) => (
           <Link
-            to={`/post/${post._id}`} // Optional: route to full post
+            to={`/post/${post._id}`} 
             key={post._id}
             className="block overflow-hidden rounded-md group"
           >
             <img
-              src={post.image || "/newsLetterBG.jpg"} // fallback image if missing
+              src={post.image || "/newsLetterBG.jpg"} 
               alt={post.title || "Gallery image"}
               className="w-full h-20 object-cover transform group-hover:scale-110 transition duration-300"
             />

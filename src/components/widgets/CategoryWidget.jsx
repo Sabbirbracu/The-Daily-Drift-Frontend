@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"; // or use `next/link` if you're using Next.js
+import { Link } from "react-router-dom"; 
 
 const categories = [
   { name: "Travel", count: 3 },

@@ -1,10 +1,9 @@
-import React from "react";
 
 const AuthorWidget = ({
   name = "Nazmul Hasan",
   bio = "A passionate full-stack developer with a love for building interactive and scalable web applications. I specialize in React, Node.js, and MongoDB. I'm always looking for new challenges and opportunities to learn and grow as a developer. Let's connect and collaborate on exciting projects. ",
-  image = "/images/nazmul.jpeg", // Make sure this image is in your public folder
-  learnMoreUrl = "/login", // Change to external link if needed
+  image = "/images/nazmul.jpeg", 
+  learnMoreUrl = "/login", 
 }) => {
   return (
     <div className="bg-gray-900 p-6 rounded-xl text-white text-center shadow">

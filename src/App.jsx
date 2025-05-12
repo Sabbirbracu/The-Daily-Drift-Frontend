@@ -1,4 +1,4 @@
-import { Toaster } from "react-hot-toast"; // Use Toaster
+import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
@@ -14,12 +14,12 @@ function App() {
 
       {/* Global Toaster for reusability */}
       <Toaster 
-        position="top-right" // You can customize the position
-        reverseOrder={false} // Optional: If you want latest toasts to show at the top
+        position="top-right" 
+        reverseOrder={false} 
         toastOptions={{
           style: {
-            backgroundColor: "#333", // Customize the background color
-            color: "#fff", // Toast text color
+            backgroundColor: "#333", 
+            color: "#fff", 
           },
         }}
       />

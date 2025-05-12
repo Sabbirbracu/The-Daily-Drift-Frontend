@@ -5,7 +5,7 @@ const Modal = ({
   onConfirm,
   onCancel,
   onClose,
-  textColor = "text-blue-600", // Default to blue text
+  textColor = "text-blue-600",
 }) => {
   if (!isOpen) return null;
 

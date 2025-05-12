@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../features/auth/hooks/useAuth"; // Adjust the path if needed
+import useAuth from "../features/auth/hooks/useAuth";
 
 const ProfileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { logout } = useAuth(); // ⬅️ make sure this gives you logout()
+  const { logout } = useAuth(); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // ✅ Call your actual logout logic
-    navigate("/"); // Redirect after logout
+    logout(); 
+    navigate("/"); 
   };
 
   return (

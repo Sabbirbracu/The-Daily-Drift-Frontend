@@ -1,6 +1,6 @@
 import { LuKanban } from "react-icons/lu";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
-import ListPostCard from "../card/ListPostCard";
+import ListPostCard from "../card/LatestPostCard";
 import PostCard from "../postCard";
 
 const FeaturedPostsSection = () => {

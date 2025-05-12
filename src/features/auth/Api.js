@@ -1,7 +1,7 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api",
+  baseUrl: "https://the-daily-drift-backend-1.onrender.com/api",
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("accessToken");
     if (token) {

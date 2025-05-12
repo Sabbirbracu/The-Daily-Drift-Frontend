@@ -18,8 +18,8 @@ const Store = configureStore({
     [postApi.reducerPath]: postApi.reducer,
     [newsletterApi.reducerPath]: newsletterApi.reducer,
     [commentApi.reducerPath]: commentApi.reducer,
-    [likeApi.reducerPath]: likeApi.reducer, // add likeApi reducer here
-    [profileApi.reducerPath]: profileApi.reducer, // Add reducer here
+    [likeApi.reducerPath]: likeApi.reducer, 
+    [profileApi.reducerPath]: profileApi.reducer, 
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -29,8 +29,8 @@ const Store = configureStore({
       postApi.middleware,
       newsletterApi.middleware,
       commentApi.middleware,
-      likeApi.middleware, // add likeApi middleware here
-      profileApi.middleware // Add middleware here
+      likeApi.middleware, 
+      profileApi.middleware 
     ),
 });
 

@@ -23,7 +23,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  return <>{children}</>;  // Render the children if user is authorized
+  return <>{children}</>; 
 };
 
 export default PrivateRoute;

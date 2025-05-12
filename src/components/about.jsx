@@ -2,7 +2,7 @@ const teamMembers = [
   {
     name: "Sabbir Ahmed",
     role: "Team Lead",
-    image: "/images/sabbir.jpeg", // Add the correct path or use a public image URL
+    image: "/images/sabbir.jpeg", 
     description:
       "Sabbir leads our vision and strategy with a passion for innovation and storytelling.",
   },
