@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { adminApi } from '../features/Admin/adminApi';
+import { adminApi } from '../features/admin/adminApi';
 import { AuthSlice } from '../features/auth/authSlice';
 import { commentApi } from '../features/comment/commentApi';
 import dashboardReducer from '../features/dashboard/dashboardSlice';
 import { newsletterApi } from '../features/newsletter/newsletterApi';
 import { likeApi } from '../features/post/likeApi';
 import { postApi } from '../features/post/postApi';
-import { profileApi } from '../features/Profile/ProfileApi'; // Import your profileApi
+import { profileApi } from '../features/Profile/ProfileApi';
 import { userApi } from '../features/users/userApi';
 
 const Store = configureStore({
