@@ -18,7 +18,10 @@ const PopularPostWidget = () => {
       </div>
     );
 
-  const popularPosts = [...posts].sort((a, b) => b.views - a.views).slice(0, 5);
+  // Sort posts by views in descending order to get the most popular posts
+  const popularPosts = [...posts]
+    .sort((a, b) => b.views - a.views) // Sorting posts by views, highest first
+    .slice(0, 5); // Limit to the top 5 posts
 
   if (!popularPosts.length)
     return (
@@ -34,14 +37,13 @@ const PopularPostWidget = () => {
         {popularPosts.map((post) => (
           <ListPostCard
             key={post._id}
-            id={post._id}  
+            id={post._id}
             title={post.title}
             image={post.image}
             category={post.category}
             createdAt={post.createdAt}
           />
         ))}
-
       </div>
     </div>
   );

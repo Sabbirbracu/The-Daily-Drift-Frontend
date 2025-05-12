@@ -10,7 +10,11 @@ const GalleryWidget = () => {
   if (isError)
     return <p className="text-red-500 text-center">Failed to load gallery</p>;
 
-  const galleryPosts = posts?.slice(0, 6);
+  // Create a shallow copy of posts and sort them by the most recent 'createdAt'
+  const sortedPosts = [...posts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // Get the most recent 6 posts
+  const galleryPosts = sortedPosts.slice(0, 6);
 
   if (!galleryPosts.length)
     return (

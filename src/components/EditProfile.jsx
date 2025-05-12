@@ -11,6 +11,9 @@ const EditeProfile = ({ user }) => {
   const [updateProfile, { isError, error }] = useUpdateProfileMutation();
   const [imageLoading, setImageLoading] = useState(false);
 
+  const fallbackAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
   if (isError) {
     console.log(error);
   }
@@ -27,25 +30,25 @@ const EditeProfile = ({ user }) => {
   const handleImageChange = async (e) => {
     setImageLoading(true);
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", preset);
-    formData.append("cloud_name", cloudName);
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+    formDataUpload.append("upload_preset", preset);
+    formDataUpload.append("cloud_name", cloudName);
 
     try {
       const res = await fetch(url, {
         method: "POST",
-        body: formData,
+        body: formDataUpload,
       });
       const result = await res.json();
       setFormData((prev) => ({
         ...prev,
         profileImage: result.secure_url,
       }));
-      setImageLoading(false);
     } catch (error) {
       console.error("Cloudinary upload failed:", error);
-      return null;
+    } finally {
+      setImageLoading(false);
     }
   };
 
@@ -62,13 +65,22 @@ const EditeProfile = ({ user }) => {
     setFormData({ ...defaultFormData, ...user });
   }, [user]);
 
+  // Function to format date to yyyy-MM-dd for date input fields
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    if (isNaN(date)) {
+      return ""; // Return empty string if the date is invalid
+    }
+    return date.toISOString().split('T')[0]; // Format as yyyy-MM-dd
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-5xl mx-auto">
         {/* Profile Image */}
         <div className="flex items-center gap-6 mb-10">
           <img
-            src={formData.profileImage}
+            src={formData.profileImage || fallbackAvatar}
             alt="Profile"
             className="w-24 h-24 rounded-full border-4 border-yellow-500 object-cover"
           />
@@ -80,6 +92,7 @@ const EditeProfile = ({ user }) => {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
+              disabled={imageLoading}
               className="block w-full text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
             />
           </div>
@@ -104,15 +117,25 @@ const EditeProfile = ({ user }) => {
                 label="Date of Birth"
                 name="dob"
                 type="date"
-                value={formData.dob}
+                value={formatDate(formData.dob)} // Apply formatDate function here
                 onChange={handleChange}
               />
-              <Input
-                label="Gender"
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              />
+              <div>
+                <label className="block text-gray-300 mb-1" htmlFor="gender">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  id="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
               <Input
                 label="Nationality"
                 name="nationality"
@@ -155,7 +178,7 @@ const EditeProfile = ({ user }) => {
                 label="Account Created"
                 name="accountCreated"
                 type="date"
-                value={formData.accountCreated}
+                value={formatDate(formData.accountCreated)} // Format date value
                 onChange={handleChange}
                 readOnly
               />
@@ -163,7 +186,7 @@ const EditeProfile = ({ user }) => {
                 label="Last Login"
                 name="lastLogin"
                 type="date"
-                value={formData.lastLogin}
+                value={formatDate(formData.lastLogin)} // Format date value
                 onChange={handleChange}
                 readOnly
               />
@@ -181,16 +204,28 @@ const EditeProfile = ({ user }) => {
                 onChange={handleChange}
                 readOnly
               />
+              <div>
+                <label className="block text-gray-300 mb-1" htmlFor="timezone">
+                  Time Zone
+                </label>
+                <select
+                  name="timezone"
+                  id="timezone"
+                  value={formData.timezone}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="GMT">GMT</option>
+                  <option value="UTC">UTC</option>
+                  <option value="PST">PST</option>
+                  <option value="EST">EST</option>
+                  {/* Add other time zones as needed */}
+                </select>
+              </div>
               <Input
                 label="Language"
                 name="language"
                 value={formData.language}
-                onChange={handleChange}
-              />
-              <Input
-                label="Time Zone"
-                name="timezone"
-                value={formData.timezone}
                 onChange={handleChange}
               />
             </div>
@@ -201,8 +236,9 @@ const EditeProfile = ({ user }) => {
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition"
+              disabled={imageLoading}
             >
-              Save Changes
+              {imageLoading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -216,7 +252,7 @@ export default EditeProfile;
 const defaultFormData = {
   fullName: "",
   dob: "",
-  gender: "",
+  gender: "male", // Default value for gender
   nationality: "",
   address: "",
   phone: "",
@@ -227,6 +263,7 @@ const defaultFormData = {
   accountType: "",
   accountVerified: "",
   language: "",
-  timezone: "",
+  timezone: "GMT", // Default value for timezone
   profileImage: "",
 };
+

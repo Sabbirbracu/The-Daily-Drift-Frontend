@@ -14,11 +14,14 @@ export const AuthProvider = ({ children }) => {
     typeof jwt === "string" && jwt.split(".").length === 3;
 
   const decodeToken = (token) => {
+    if (!token || typeof token !== "string") return null;
+
     try {
       if (isValidJwt(token)) {
         return jwtDecode(token);
       }
-      console.warn("Invalid or malformed token:", token);
+      // You can comment this out if you don't want logs:
+      // console.warn("Invalid or malformed token:", token);
     } catch (err) {
       console.error("Token decoding error:", err);
     }
@@ -30,10 +33,14 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem("accessToken");
       let decodedUser = decodeToken(storedToken);
 
-      if (decodedUser) {
-        const currentTime = Date.now() / 1000;
+      const currentTime = Date.now() / 1000;
 
-        if (decodedUser.exp <= currentTime && typeof newToken === "string" && isValidJwt(newToken)) {
+      if (decodedUser) {
+        if (
+          decodedUser.exp <= currentTime &&
+          typeof newToken === "string" &&
+          isValidJwt(newToken)
+        ) {
           localStorage.setItem("accessToken", newToken);
           decodedUser = decodeToken(newToken);
         }
@@ -69,7 +76,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, userRole: user?.role, logout, loading, Login }}>
+    <AuthContext.Provider value={{ user, userRole: user?.role, logout, loading, Login, setUser }}>
       {children}
     </AuthContext.Provider>
   );
