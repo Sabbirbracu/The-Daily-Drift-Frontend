@@ -6,28 +6,30 @@ export const commentApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ["Comment"],
   endpoints: (builder) => ({
-    suspendComment: builder.mutation({
-      query: (commentId) => ({
-        url: `/comments/${commentId}/suspend`,
-        method: "PUT",
-      }),
-      invalidatesTags: ["Comment"],
-    }),
-    getCommtents: builder.query({
+    getComments: builder.query({
       query: (postId) => `/comments/${postId}`,
+      providesTags: (result, error, postId) => [{ type: "Comment", id: postId }],
     }),
     createComment: builder.mutation({
-      query: (postId, ...comment) => ({
+      query: ({ postId, content }) => ({
         url: `/comments/${postId}`,
         method: "POST",
-        body: comment,
+        body: { content },
       }),
+      invalidatesTags: (result, error, { postId }) => [{ type: "Comment", id: postId }],
+    }),
+    deleteComment: builder.mutation({
+      query: (commentId) => ({
+        url: `/comments/${commentId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Comment"],
     }),
   }),
 });
 
 export const {
-  useSuspendCommentMutation,
-  useGetCommtentsQuery,
+  useGetCommentsQuery,
   useCreateCommentMutation,
+  useDeleteCommentMutation,
 } = commentApi;

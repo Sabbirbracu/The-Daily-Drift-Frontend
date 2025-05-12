@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { adminApi } from '../features/Admin/adminApi';
 import { AuthSlice } from '../features/auth/authSlice';
-import { commentApi } from '../features/comment/commentApi'; 
+import { commentApi } from '../features/comment/commentApi';
+import dashboardReducer from '../features/dashboard/dashboardSlice';
 import { newsletterApi } from '../features/newsletter/newsletterApi';
+import { likeApi } from '../features/post/likeApi';
 import { postApi } from '../features/post/postApi';
 import { userApi } from '../features/users/userApi';
-import dashboardReducer from '../features/dashboard/dashboardSlice';
 
 const Store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const Store = configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [postApi.reducerPath]: postApi.reducer,
     [newsletterApi.reducerPath]: newsletterApi.reducer,
-    [commentApi.reducerPath]: commentApi.reducer, 
+    [commentApi.reducerPath]: commentApi.reducer,
+    [likeApi.reducerPath]: likeApi.reducer, // add likeApi reducer here
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +26,8 @@ const Store = configureStore({
       userApi.middleware,
       postApi.middleware,
       newsletterApi.middleware,
-      commentApi.middleware
+      commentApi.middleware,
+      likeApi.middleware // add likeApi middleware here
     ),
 });
 

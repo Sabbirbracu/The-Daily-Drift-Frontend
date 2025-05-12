@@ -28,7 +28,7 @@ const GalleryWidget = () => {
             className="block overflow-hidden rounded-md group"
           >
             <img
-              src={post.image || "/placeholder.jpg"} // fallback image if missing
+              src={post.image || "/newsLetterBG.jpg"} // fallback image if missing
               alt={post.title || "Gallery image"}
               className="w-full h-20 object-cover transform group-hover:scale-110 transition duration-300"
             />

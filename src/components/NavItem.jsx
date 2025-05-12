@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../features/auth/hooks/useAuth";
@@ -8,6 +8,7 @@ const NavItem = ({ categories }) => {
   const { pathname } = useLocation();
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const getUrl = (category) => {
     return category.toLowerCase() === "home"
@@ -16,6 +17,19 @@ const NavItem = ({ categories }) => {
   };
 
   const isActive = (path) => pathname === path;
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <ul className="py-3 hidden lg:flex gap-6 items-center relative">
@@ -32,13 +46,12 @@ const NavItem = ({ categories }) => {
         </li>
       ))}
 
-      <li
-        className="relative"
-        onMouseEnter={() => setDropdownOpen(true)}
-        onMouseLeave={() => setDropdownOpen(false)}
-      >
+      <li className="relative" ref={dropdownRef}>
         {user ? (
-          <button className="text-white text-2xl hover:text-red-400 transition">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="text-white text-2xl hover:text-red-400 transition"
+          >
             <FaUserCircle />
           </button>
         ) : (
@@ -54,9 +67,7 @@ const NavItem = ({ categories }) => {
           <ul className="absolute top-9 right-0 bg-white text-black shadow-lg py-2 rounded w-40 z-50">
             <li className="hover:bg-gray-200 px-4 py-2">
               <Link
-                to={
-                  user.role === "admin" ? "/dashboard-admin" : "/dashboard-user"
-                }
+                to={user.role === "admin" ? "/dashboard-admin" : "/dashboard-user"}
               >
                 Dashboard
               </Link>

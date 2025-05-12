@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { LuKanban } from "react-icons/lu";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import PostCard from "../postCard";
-import { LuKanban } from "react-icons/lu";
 
 const FeaturedCategorySection = () => {
   const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
@@ -57,11 +57,13 @@ const FeaturedCategorySection = () => {
           filteredPosts.map((post) => (
             <PostCard
               key={post._id}
+              id={post._id}
               title={post.title}
               image={post.image}
               content={post.content}
               category={post.category}
             />
+
           ))
         ) : (
           <p className="text-gray-400 col-span-full">No posts found for this category.</p>

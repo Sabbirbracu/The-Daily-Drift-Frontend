@@ -11,7 +11,13 @@ export const likeApi = createApi({
         method: "POST",
       }),
     }),
+    getLike: builder.query({
+      query: (postId) => ({
+        url: `/posts/${postId}/likes`, // ✅ fixed path
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useToggleLikeMutation } = likeApi;
+export const { useToggleLikeMutation, useGetLikeQuery } = likeApi;

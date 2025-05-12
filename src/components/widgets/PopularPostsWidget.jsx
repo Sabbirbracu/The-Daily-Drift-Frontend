@@ -34,12 +34,14 @@ const PopularPostWidget = () => {
         {popularPosts.map((post) => (
           <ListPostCard
             key={post._id}
+            id={post._id}  
             title={post.title}
-            image={post.image || "/placeholder.jpg"}
+            image={post.image}
             category={post.category}
             createdAt={post.createdAt}
           />
         ))}
+
       </div>
     </div>
   );
