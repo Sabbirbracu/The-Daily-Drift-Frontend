@@ -9,7 +9,7 @@ import {
 } from '../features/admin/adminApi';
 
 const AdminDashboard = () => {
-  // ✅ Listen to the trigger from Redux
+  // Listen to the trigger from Redux
   const refetchTrigger = useSelector((state) => state.dashboard.refetchTrigger);
 
   // Admin stats query
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     refetch: refetchRoles,
   } = useGetRoleDistributionStatsQuery();
 
-  // ✅ Automatically refetch when the trigger changes
+  // Automatically refetch when the trigger changes
   useEffect(() => {
     refetchStats();
     refetchRoles();
