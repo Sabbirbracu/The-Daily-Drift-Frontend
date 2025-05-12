@@ -1,8 +1,8 @@
-import { useGetPostsQuery } from "../features/post/postApi";
 import LatestPostCard from "../components/card/LatestPostCard";
+import useSearchData from "../features/auth/hooks/SearchData";
 
 const AllPosts = () => {
-  const { data: posts = [], isLoading, isError, error } = useGetPostsQuery();
+  const { posts, isLoading, isError, error } = useSearchData();
 
   if (isLoading) {
     return <div className="text-center py-8">Loading posts...</div>;

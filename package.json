@@ -24,6 +24,7 @@
     "dompurify": "^3.2.5",
     "framer-motion": "^12.9.2",
     "jwt-decode": "^4.0.0",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.503.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
