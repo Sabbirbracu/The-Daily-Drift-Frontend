@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../features/auth/authSlice";
 
 const Register = () => {
   const [register, { isError, error, isLoading }] = useRegisterMutation();
   const [formData, setFormData] = useState({
-    name: "",
+    userName: "",
     email: "",
     password: "",
   });
@@ -22,11 +22,11 @@ const Register = () => {
       const response = await register(formData).unwrap();
       console.log(response);
 
-      setFormData({ name: "", email: "", password: "" });
+      setFormData({ userName: "", email: "", password: "" });
       setSuccess(true); // Show success popup
       setTimeout(() => {
         setSuccess(false); // Hide the success popup after 3 seconds
-        navigate("/");
+        navigate("/login");
       }, 3000);
     } catch (err) {
       console.error("Registration failed:", err || err.message);
@@ -41,7 +41,9 @@ const Register = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
             <div className="fixed inset-0 flex items-center justify-center z-50">
               <div className="bg-green-500 text-white p-4 rounded-md shadow-lg">
-                <h3 className="text-lg font-semibold">Registration Successful!</h3>
+                <h3 className="text-lg font-semibold">
+                  Registration Successful!
+                </h3>
                 <p>Your account has been created successfully.</p>
               </div>
             </div>
@@ -59,8 +61,8 @@ const Register = () => {
                 <label className="block mb-1">Name</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="userName"
+                  value={formData.userName}
                   onChange={handleChange}
                   required
                   className="w-full border px-3 py-2 rounded"
