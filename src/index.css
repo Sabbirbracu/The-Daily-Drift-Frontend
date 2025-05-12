@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind utilities;
+
+/* Global Theme */
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: "Nunito", sans-serif;
+}
+
+/* Custom Utility Classes */
+.primary-font {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+}
+
+.content-font {
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+}
+
+.red-button {
+  background-color: #d30a0a;
+  font-family: content-font;
+  font-size: 1.5rem;
+  color: white;
+  padding: 8px 20px 8px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.red-button:hover {
+  background-color: #ffffff;
+  color: red;
+  transition: 0.1ms;
+  animation-duration: 300ms;
+}
+
+.ProseMirror img {
+  max-width: 400px;
+  max-height: 400px;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tiptap:focus {
+  outline: none !important;
+}
+
+/* Spinner styles */
+.spinner {
+  border: 4px solid #f3f3f3; /* Light grey background */
+  border-top: 4px solid #ff0000; /* Red color for the rotating part */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
