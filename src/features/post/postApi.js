@@ -10,7 +10,7 @@ export const postApi = createApi({
     // Get posts by optional status or search
     getPosts: builder.query({
       query: ({ search = "", status } = {}) => ({
-        url: "/posts",
+        url: "/posts/",
         params: { search, status },
       }),
       providesTags: ["Post"],
@@ -98,7 +98,9 @@ export const postApi = createApi({
         method: "POST",
         body: { optionIndex },
       }),
-      invalidatesTags: (result, error, { postId }) => [{ type: "Post", id: postId }],
+      invalidatesTags: (result, error, { postId }) => [
+        { type: "Post", id: postId },
+      ],
     }),
 
     // Admin: approve post

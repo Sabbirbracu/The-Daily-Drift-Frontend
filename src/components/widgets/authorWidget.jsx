@@ -6,7 +6,9 @@ const AuthorWidget = ({
   learnMoreUrl = "/login", 
 }) => {
   return (
-    <div className="bg-gray-900 p-6 rounded-xl text-white text-center shadow">
+    <div>
+      <h2 className="text-2xl font-bold mb-4 text-center">Top Authors</h2>
+      <div className="bg-gray-900 p-6 rounded-xl text-white text-center shadow">
       <img
         src={image}
         alt={`${name} - Web Developer`}
@@ -20,6 +22,8 @@ const AuthorWidget = ({
         </button>
       </a>
     </div>
+    </div>
+    
   );
 };
 

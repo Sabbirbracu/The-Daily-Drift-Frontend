@@ -8,10 +8,12 @@ import { likeApi } from '../features/post/likeApi';
 import { postApi } from '../features/post/postApi';
 import { profileApi } from '../features/Profile/ProfileApi';
 import { userApi } from '../features/users/userApi';
+import uiReducer from '../features/ui/uiSlice'; // ✅ NEW
 
 const Store = configureStore({
   reducer: {
     dashboard: dashboardReducer,
+    ui: uiReducer, // ✅ Added UI slice
     [AuthSlice.reducerPath]: AuthSlice.reducer,
     [adminApi.reducerPath]: adminApi.reducer,
     [userApi.reducerPath]: userApi.reducer,

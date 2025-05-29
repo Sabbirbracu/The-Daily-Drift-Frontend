@@ -29,7 +29,7 @@ const ManageUser = () => {
 
   const transformedUsers = users?.map((u) => ({
     id: u._id,
-    name: u.name,
+    name: u.fullName,
     email: u.email,
     role: u.role,
     admin: u.role === "admin",
