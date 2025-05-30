@@ -9,7 +9,9 @@ import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner"; // Adjust path if needed
 import Toolbar from "../components/Toolbar";
 import useAuth from "../features/auth/hooks/useAuth";
 import {
@@ -17,6 +19,7 @@ import {
   useUpdatePostMutation,
 } from "../features/post/postApi";
 import '/Users/sabbirahmad/The Daily Drift/frontend/src/editorStyles.css';
+
 
 
 const TOP_CATEGORIES = [
@@ -132,35 +135,76 @@ const CreatePost = ({ post = null }) => {
     input.click();
   };
 
+  // const handleSubmit = async () => {
+  //   if (!editor) return;
+  //   try {
+  //     const content = editor.getHTML();
+  //     const finalData = { ...data, content };
+  //     setData(finalData);
+  //     let result;
+  //     if (post) {
+  //       result = await updatePost({ id: post._id, ...finalData }).unwrap();
+  //     } else {
+  //       result = await createPost(finalData).unwrap();
+  //     }
+  //     if (result) {
+  //       setData({
+  //         title: "",
+  //         category: "",
+  //         image: "",
+  //         content: "",
+  //         metaTitle: "",
+  //         metaDescription: "",
+  //         tags: "",
+  //       });
+  //       editor.commands.setContent("<p>Write your content here...</p>");
+  //       navigate(`/dashboard-${user.role}/post`);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const handleSubmit = async () => {
-    if (!editor) return;
-    try {
-      const content = editor.getHTML();
-      const finalData = { ...data, content };
-      setData(finalData);
-      let result;
-      if (post) {
-        result = await updatePost({ id: post._id, ...finalData }).unwrap();
-      } else {
-        result = await createPost(finalData).unwrap();
-      }
-      if (result) {
-        setData({
-          title: "",
-          category: "",
-          image: "",
-          content: "",
-          metaTitle: "",
-          metaDescription: "",
-          tags: "",
-        });
-        editor.commands.setContent("<p>Write your content here...</p>");
-        navigate(`/dashboard-${user.role}/post`);
-      }
-    } catch (error) {
-      console.log(error);
+  if (!editor) return;
+
+  try {
+    const content = editor.getHTML();
+    const finalData = { ...data, content };
+    setData(finalData);
+
+    let result;
+    if (post) {
+      toast.loading("Updating post...");
+      result = await updatePost({ id: post._id, ...finalData }).unwrap();
+      toast.dismiss();
+      toast.success("Post updated successfully!");
+    } else {
+      toast.loading("Publishing post...");
+      result = await createPost(finalData).unwrap();
+      toast.dismiss();
+      toast.success("Post published successfully!");
     }
-  };
+
+    if (result) {
+      setData({
+        title: "",
+        category: "",
+        image: "",
+        content: "",
+        metaTitle: "",
+        metaDescription: "",
+        tags: "",
+      });
+      editor.commands.setContent("<p>Write your content here...</p>");
+      navigate(`/dashboard-${user.role}/post`);
+    }
+  } catch (error) {
+    toast.dismiss();
+    toast.error("Something went wrong. Try again!");
+    console.error(error);
+  }
+};
 
   useEffect(() => {
     if (post) {
@@ -179,248 +223,154 @@ const CreatePost = ({ post = null }) => {
     }
   }, [post, editor]);
 
-  if (!editor) return <div>Loading Editor...</div>;
+  if (!editor) return  <Spinner />; // Ensure editor is initialized before rendering
+  if (isLoading) return <Spinner />;
+
 
   return (
-    // <div className="p-6 max-w-4xl mx-auto border rounded-md shadow-md bg-white text-black">
-    //   <h2 className="text-3xl font-semibold mb-6">{post ? "Update" : "Create"} Your Post</h2>
+    <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full text-sm">
+            ✍️
+          </span>
+          {post ? "Update Post" : "Create New Post"}
+        </h2>
+        {/* Add a collapse toggle here if you want for mobile UX */}
+      </div>
 
-    //   <div className="grid grid-cols-1 gap-4">
-    //     <input
-    //       type="text"
-    //       name="title"
-    //       value={data.title}
-    //       placeholder="Enter Post Title"
-    //       onChange={handleInputChange}
-    //       className="border p-2 rounded-md"
-    //     />
-
-    //     <select
-    //       name="category"
-    //       value={data.category}
-    //       onChange={handleInputChange}
-    //       className="border p-2 rounded-md"
-    //     >
-    //       <option value="">Select Category</option>
-    //       {TOP_CATEGORIES.map((cat) => (
-    //         <option key={cat} value={cat}>
-    //           {cat}
-    //         </option>
-    //       ))}
-    //     </select>
-
-    //     <input
-    //       type="text"
-    //       name="metaTitle"
-    //       value={data.metaTitle}
-    //       placeholder="Meta Title"
-    //       onChange={handleInputChange}
-    //       className="border p-2 rounded-md"
-    //     />
-
-    //     <textarea
-    //       name="metaDescription"
-    //       value={data.metaDescription}
-    //       placeholder="Meta Description"
-    //       rows={3}
-    //       onChange={handleInputChange}
-    //       className="border p-2 rounded-md"
-    //     />
-
-    //     <input
-    //       type="text"
-    //       name="tags"
-    //       value={data.tags}
-    //       placeholder="Tags (comma separated)"
-    //       onChange={handleInputChange}
-    //       className="border p-2 rounded-md"
-    //     />
-
-    //     <div className="space-y-2">
-    //       <input
-    //         ref={fileInputRef}
-    //         type="file"
-    //         onChange={handleThumbnailUpload}
-    //         accept="image/*"
-    //         className="hidden"
-    //       />
-    //       {data.image && (
-    //         <img
-    //           src={data.image}
-    //           alt="Thumbnail"
-    //           className="w-24 h-24 object-cover rounded"
-    //         />
-    //       )}
-    //       <div className="flex items-center gap-3">
-    //         <button
-    //           type="button"
-    //           className="bg-red-500 text-white px-3 py-1 rounded-md"
-    //           onClick={() => fileInputRef.current?.click()}
-    //         >
-    //           Upload Thumbnail
-    //         </button>
-    //         {uploadProgress > 0 && uploadProgress < 100 && (
-    //           <span className="text-sm text-gray-600">
-    //             Uploading: {uploadProgress}%
-    //           </span>
-    //         )}
-    //       </div>
-    //     </div>
-
-    //     <Toolbar editor={editor} handleImageUpload={handleImageUpload} />
-    //     <EditorContent
-    //       editor={editor}
-    //       className="min-h-[200px] border p-3 rounded-md"
-    //     />
-
-    //     <div className="flex justify-between mt-4">
-    //       <button
-    //         onClick={() => navigate(-1)}
-    //         className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
-    //       >
-    //         Cancel
-    //       </button>
-
-    //       <button
-    //         onClick={handleSubmit}
-    //         className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-    //       >
-    //         {isLoading ? "Submitting..." : post ? "Update Post" : "Publish Post"}
-    //       </button>
-    //     </div>
-    //   </div>
-    // </div>
-
-    <div className="p-6 max-w-4xl mx-auto border rounded-2xl shadow-lg bg-white text-black">
-  <h2 className="text-3xl font-bold mb-6 text-gray-800">
-    {post ? "📝 Update Your Post" : "🆕 Create New Post"}
-  </h2>
-
-  <div className="grid grid-cols-1 gap-5">
-    <input
-      type="text"
-      name="title"
-      value={data.title}
-      placeholder="Enter Post Title"
-      onChange={handleInputChange}
-      className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-    />
-
-    <select
-      name="category"
-      value={data.category}
-      onChange={handleInputChange}
-      className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-    >
-      <option value="">Select Category</option>
-      {TOP_CATEGORIES.map((cat) => (
-        <option key={cat} value={cat}>
-          {cat}
-        </option>
-      ))}
-    </select>
-
-    <input
-      type="text"
-      name="metaTitle"
-      value={data.metaTitle}
-      placeholder="Meta Title"
-      onChange={handleInputChange}
-      className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
-    />
-
-    <textarea
-      name="metaDescription"
-      value={data.metaDescription}
-      placeholder="Meta Description"
-      rows={3}
-      onChange={handleInputChange}
-      className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
-    />
-
-    <input
-      type="text"
-      name="tags"
-      value={data.tags}
-      placeholder="Tags (comma separated)"
-      onChange={handleInputChange}
-      className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
-    />
-
-    {/* Thumbnail Upload */}
-    <div className="space-y-3">
-      <input
-        ref={fileInputRef}
-        type="file"
-        onChange={handleThumbnailUpload}
-        accept="image/*"
-        className="hidden"
-      />
-
-      {data.image && (
-        <img
-          src={data.image}
-          alt="Thumbnail"
-          className="w-24 h-24 object-cover rounded-md border"
+      <div className="grid gap-4 sm:gap-6">
+        {/* Title */}
+        <input
+          type="text"
+          name="title"
+          value={data.title}
+          placeholder="Post Title"
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 sm:py-2.5 text-base border rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500 placeholder:text-gray-400"
         />
-      )}
 
-      <div className="flex items-center gap-4">
-        <button
-          type="button"
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm"
-          onClick={() => fileInputRef.current?.click()}
+        {/* Category */}
+        <select
+          name="category"
+          value={data.category}
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 sm:py-2.5 text-base border rounded-md border-gray-300 text-gray-700 focus:ring-2 focus:ring-indigo-500"
         >
-          {data.image ? "Change Thumbnail" : "Upload Thumbnail"}
-        </button>
+          <option value="">Select Category</option>
+          {TOP_CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
 
-        {uploadProgress > 0 && uploadProgress < 100 && (
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${uploadProgress}%` }}
-            ></div>
+        {/* Meta Title */}
+        <input
+          type="text"
+          name="metaTitle"
+          value={data.metaTitle}
+          placeholder="Meta Title"
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 text-base border rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500 placeholder:text-gray-400"
+        />
+
+        {/* Meta Description */}
+        <textarea
+          name="metaDescription"
+          value={data.metaDescription}
+          placeholder="Meta Description"
+          rows={2}
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 text-base border rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500 placeholder:text-gray-400 resize-none"
+        />
+
+        {/* Tags */}
+        <input
+          type="text"
+          name="tags"
+          value={data.tags}
+          placeholder="Tags (comma separated)"
+          onChange={handleInputChange}
+          className="w-full px-3 py-2 text-base border rounded-md border-gray-300 focus:ring-2 focus:ring-indigo-500 placeholder:text-gray-400"
+        />
+
+        {/* Thumbnail Upload */}
+        <div className="space-y-2">
+          {data.image && (
+            <img
+              src={data.image}
+              alt="Thumbnail Preview"
+              className="w-28 h-28 object-cover rounded-md border"
+            />
+          )}
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm rounded-md shadow-sm"
+            >
+              {data.image ? "Change Thumbnail" : "Upload Thumbnail"}
+            </button>
+
+            {uploadProgress > 0 && uploadProgress < 100 && (
+              <div className="w-full sm:max-w-xs h-2 rounded-full bg-gray-200 overflow-hidden">
+                <div
+                  className="h-full bg-indigo-500 transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            )}
           </div>
-        )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleThumbnailUpload}
+            accept="image/*"
+            className="hidden"
+          />
+        </div>
+
+        {/* Editor */}
+        <div className="border border-gray-300 rounded-md p-4">
+          <Toolbar editor={editor} handleImageUpload={handleImageUpload} />
+          <div className="border-1 rounded-md border-b-blue-50">
+            <EditorContent
+            editor={editor}
+            className="tiptap-editor mt-2 min-h-[160px] px-2 py-1 focus:outline-none text-sm"
+          />
+          </div>
+
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className={`px-5 py-2 text-sm font-medium text-white rounded-md shadow-sm transition ${
+              isLoading
+                ? "bg-indigo-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : post ? "Update Post" : "Publish Post"}
+          </button>
+        </div>
       </div>
     </div>
 
-    {/* Text Editor Toolbar */}
-    <div className="border rounded-lg p-3 shadow-sm">
-      <Toolbar editor={editor} handleImageUpload={handleImageUpload} />
-    </div>
 
-    <EditorContent
-      editor={editor}
-      className="tiptap-editor min-h-[200px] border border-gray-300 p-4 rounded-lg focus:outline-none"
-    />
-
-
-    {/* Footer Buttons */}
-    <div className="flex justify-between mt-6">
-      <button
-        onClick={() => navigate(-1)}
-        className="bg-gray-300 text-black px-4 py-2 rounded-lg hover:bg-gray-400"
-      >
-        Cancel
-      </button>
-
-      <button
-        onClick={handleSubmit}
-        className={`px-6 py-2 text-white font-semibold rounded-lg transition ${
-          isLoading
-            ? "bg-blue-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"
-        }`}
-        disabled={isLoading}
-      >
-        {isLoading ? "Submitting..." : post ? "Update Post" : "Publish Post"}
-      </button>
-    </div>
-  </div>
-</div>
-
-  
 );
 };
 
