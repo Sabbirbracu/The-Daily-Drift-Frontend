@@ -14,26 +14,13 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner"; // Adjust path if needed
 import Toolbar from "../components/Toolbar";
 import useAuth from "../features/auth/hooks/useAuth";
+import { useGetCategoriesQuery } from "../features/category/categoryApi"; // adjust path as needed
 import {
   useCreatePostMutation,
   useUpdatePostMutation,
 } from "../features/post/postApi";
 import '/Users/sabbirahmad/The Daily Drift/frontend/src/editorStyles.css';
 
-
-
-const TOP_CATEGORIES = [
-  "Technology",
-  "Health",
-  "Education",
-  "Business",
-  "Entertainment",
-  "Travel",
-  "Finance",
-  "Food",
-  "Lifestyle",
-  "Sports",
-];
 
 const CreatePost = ({ post = null }) => {
   const navigate = useNavigate();
@@ -50,6 +37,7 @@ const CreatePost = ({ post = null }) => {
     metaDescription: "",
     tags: "",
   });
+  const { data: categoriesData, isLoading: isCategoriesLoading, error } = useGetCategoriesQuery();
   const url = import.meta.env.VITE_CLOUDINARY_URL;
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
   const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -252,18 +240,26 @@ const CreatePost = ({ post = null }) => {
 
         {/* Category */}
         <select
-          name="category"
-          value={data.category}
-          onChange={handleInputChange}
-          className="w-full px-3 py-2 sm:py-2.5 text-base border rounded-md border-gray-300 text-gray-700 focus:ring-2 focus:ring-indigo-500"
-        >
-          <option value="">Select Category</option>
-          {TOP_CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
+        name="category"
+        value={data.category}
+        onChange={handleInputChange}
+        className="w-full px-3 py-2 sm:py-2.5 text-base border rounded-md border-gray-300 text-white focus:ring-2 focus:ring-indigo-500"
+        disabled={isCategoriesLoading}
+      >
+        <option value="">Select Category</option>
+
+        {/* Render categories dynamically */}
+        {categoriesData && categoriesData.length > 0 ? (
+          categoriesData.map((cat) => (
+            <option key={cat._id || cat.id || cat.name} value={cat.name || cat.title || cat}>
+              {cat.name || cat.title || cat}
             </option>
-          ))}
-        </select>
+          ))
+        ) : (
+          !isCategoriesLoading && <option disabled>No categories found</option>
+        )}
+      </select>
+
 
         {/* Meta Title */}
         <input

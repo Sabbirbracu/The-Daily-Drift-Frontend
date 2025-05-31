@@ -23,13 +23,14 @@ const Category = () => {
   const [editingName, setEditingName] = useState("");
 
   // Table column headers
-  const columns = ["Name", "Actions"];
+  const columns = ["Name", "Posts", "Actions"];
 
   // Transform categories data
   const tableData = categories
-    ? categories.map(({ _id, name }) => ({
+    ? categories.map(({ _id, name, count }) => ({
         id: _id,
         name,
+        count,
       }))
     : [];
 
@@ -141,8 +142,10 @@ const Category = () => {
       ) : (
         <span className="text-white">{row.name}</span>
       ),
+    posts: <span className="text-white text-center">{row.count}</span>,
     actions: renderActions(row),
   }));
+
 
   return (
     <div className="p-6 md:p-10 bg-gray-900 min-h-screen rounded-md text-white  mx-auto">
