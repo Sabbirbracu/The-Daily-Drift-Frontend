@@ -19,6 +19,7 @@ import UserProfile from "../Pages/UserProfile.jsx";
 
 import AdminLayout from "../layouts/AdminLayouts.jsx";
 import UserLayout from "../layouts/UserLayout.jsx";
+import Category from "../Pages/AdminCategory.jsx";
 import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 
@@ -59,6 +60,7 @@ const AppRoutes = () => {
             <Route path="posts" element={<ManagePosts />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditeProfilePage />} />
+            <Route path="category" element={<Category/>} />
           </Route>
         </Route>
 

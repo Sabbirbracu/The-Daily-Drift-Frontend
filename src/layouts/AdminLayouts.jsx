@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
@@ -7,6 +6,7 @@ const adminMenuItems = [
   { label: "Users", path: "/dashboard-admin/users", icon: "👥" },
   { label: "Posts", path: "/dashboard-admin/posts", icon: "📝" },
   { label: "Profile", path: "/dashboard-admin/profile", icon: "🙍‍♂️" },
+  { label: "Category", path: "/dashboard-admin/category", icon: "📂" },
 ];
 
 const AdminLayout = () => {

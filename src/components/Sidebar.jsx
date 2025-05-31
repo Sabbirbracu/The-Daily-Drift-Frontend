@@ -32,14 +32,14 @@ const Sidebar = ({ menuItems }) => {
       </div>
 
       {/* Logout */}
-      <div
+      {/* <div
         className="mt-6 hover:text-red-400 cursor-pointer flex items-center gap-2"
         onClick={logout}
         title="Logout"
       >
         <span>🚪</span>
         <span>Logout</span>
-      </div>
+      </div> */}
     </aside>
   );
 };
