@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-const ListPostCard = ({ id, title, image, category, createdAt }) => {
+const ListPostCard = ({ id, title, image, category, createdAt, style }) => {
   const defaultImage =
     "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
@@ -21,7 +21,7 @@ const ListPostCard = ({ id, title, image, category, createdAt }) => {
 
         {/* Link on title */}
         <Link to={`/post/${id}`}>
-          <h4 className="text-sm font-semibold leading-tight line-clamp-2 hover:underline">
+          <h4 className="text-sm font-semibold leading-tight line-clamp-2 hover:underline" style={style}>
             {title}
           </h4>
         </Link>
@@ -44,6 +44,7 @@ ListPostCard.propTypes = {
   image: PropTypes.string,
   category: PropTypes.string.isRequired,
   createdAt: PropTypes.string.isRequired,
+  style: PropTypes.object,
 };
 
 export default ListPostCard;
