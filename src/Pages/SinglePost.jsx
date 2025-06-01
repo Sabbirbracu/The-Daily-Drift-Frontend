@@ -13,6 +13,8 @@ import {
   useGetCommentsQuery,
 } from "../features/comment/commentApi";
 import { useGetPostByIdQuery } from "../features/post/postApi";
+import { Link } from "react-router-dom";
+
 
 const SinglePost = () => {
   const [showComment, setShowComment] = useState(true);
@@ -70,9 +72,16 @@ const SinglePost = () => {
 
             {/* Author Info */}
             <div className="flex items-center justify-between mb-6 text-sm text-gray-400 px-1">
-              <p>
-                By <span className="font-medium text-white">{post.author?.name || "Unknown Author"}</span>
-              </p>
+              <Link to={`/author/${post.author?._id}`} className="flex items-center gap-2 hover:underline">
+                <img
+                  src={post.author?.profileImage || "https://ui-avatars.com/api/?name=Unknown&background=random"}
+                  alt={post.author?.displayName || "Author"}
+                  className="w-8 h-8 rounded-full object-cover border border-gray-700"
+                />
+                <span className="font-medium text-white">
+                  {post.author?.displayName || "Unknown Author"}
+                </span>
+              </Link>
               <p>{formatDate(post.createdAt)}</p>
             </div>
 
