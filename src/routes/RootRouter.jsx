@@ -5,7 +5,7 @@ import AdminDashboard from "../Pages/AdminDashboard.jsx";
 import AllPosts from "../Pages/AllPosts.jsx";
 import Contact from "../Pages/contact.jsx";
 import CreatePost from "../Pages/CreatePost.jsx";
-import EditePost from "../Pages/EditePost.jsx";
+import EditPost from "../Pages/EditPost.jsx";
 import Home from "../Pages/Home.jsx";
 import Login from "../Pages/Login.jsx";
 import ManagePosts from "../Pages/ManagePosts.jsx";
@@ -43,7 +43,7 @@ const AppRoutes = () => {
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditeProfilePage />} />
             <Route path="create-post" element={<CreatePost />} />
-            <Route path="edite-post/:id" element={<EditePost />} />
+            <Route path="edit-post/:id" element={<EditPost />} />
           </Route>
 
           {/* Admin Routes */}

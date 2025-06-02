@@ -123,36 +123,6 @@ const CreatePost = ({ post = null }) => {
     input.click();
   };
 
-  // const handleSubmit = async () => {
-  //   if (!editor) return;
-  //   try {
-  //     const content = editor.getHTML();
-  //     const finalData = { ...data, content };
-  //     setData(finalData);
-  //     let result;
-  //     if (post) {
-  //       result = await updatePost({ id: post._id, ...finalData }).unwrap();
-  //     } else {
-  //       result = await createPost(finalData).unwrap();
-  //     }
-  //     if (result) {
-  //       setData({
-  //         title: "",
-  //         category: "",
-  //         image: "",
-  //         content: "",
-  //         metaTitle: "",
-  //         metaDescription: "",
-  //         tags: "",
-  //       });
-  //       editor.commands.setContent("<p>Write your content here...</p>");
-  //       navigate(`/dashboard-${user.role}/post`);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleSubmit = async () => {
   if (!editor) return;
 
@@ -164,7 +134,7 @@ const CreatePost = ({ post = null }) => {
     let result;
     if (post) {
       toast.loading("Updating post...");
-      result = await updatePost({ id: post._id, ...finalData }).unwrap();
+      result = await updatePost({ id: post._id, data: finalData }).unwrap();
       toast.dismiss();
       toast.success("Post updated successfully!");
     } else {

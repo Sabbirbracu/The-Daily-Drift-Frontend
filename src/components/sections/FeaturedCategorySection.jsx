@@ -1,29 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
 import { LuKanban } from "react-icons/lu";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
+import PostPreviewModal from "../modals/PostPreviewModal";
 import PostCard from "../postCard";
 
 const FeaturedCategorySection = () => {
   const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
   const [activeCategory, setActiveCategory] = useState(null);
+  const [previewPost, setPreviewPost] = useState(null); // 🆕
 
-  
   const categories = useMemo(() => {
     const unique = [...new Set(posts.map((post) => post.category))];
     return unique;
   }, [posts]);
 
-  
   useEffect(() => {
     if (!activeCategory && categories.length) {
       setActiveCategory(categories[0]);
     }
   }, [categories, activeCategory]);
 
-  // Filter posts based on the active category
   const filteredPosts = posts
     .filter((post) => post.category === activeCategory)
-    .slice(0, 3);  
+    .slice(0, 3);
+
   if (isLoading) return <p className="text-white">Loading featured categories...</p>;
   if (isError) return <p className="text-red-500">Failed to load posts</p>;
 
@@ -31,9 +31,9 @@ const FeaturedCategorySection = () => {
     <section className="mb-10">
       {/* Section Heading */}
       <div className="flex justify-between items-center mb-6">
-      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-      <LuKanban className="text-red-500 text-5xl font-extrabold"/> Featured Categories
-      </h2>
+        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+          <LuKanban className="text-red-500 text-5xl font-extrabold" /> Featured Categories
+        </h2>
         <div className="space-x-4">
           {categories.map((cat) => (
             <button
@@ -62,13 +62,24 @@ const FeaturedCategorySection = () => {
               image={post.image}
               content={post.content}
               category={post.category}
+              author={post.author}
+              createdAt={post.createdAt}
+              onPreview={() => setPreviewPost(post)} // 🆕 preview hook
             />
-
           ))
         ) : (
           <p className="text-gray-400 col-span-full">No posts found for this category.</p>
         )}
       </div>
+
+      {/* 🆕 Preview Modal */}
+      {previewPost && (
+        <PostPreviewModal
+          {...previewPost}
+          id={previewPost._id}
+          onClose={() => setPreviewPost(null)}
+        />
+      )}
     </section>
   );
 };

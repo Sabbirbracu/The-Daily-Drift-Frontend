@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { LuKanban } from "react-icons/lu";
 import { useGetPublicPostsQuery } from "../../features/post/postApi";
 import ListPostCard from "../card/LatestPostCard";
+import PostPreviewModal from "../modals/PostPreviewModal";
 import PostCard from "../postCard";
 
 const FeaturedPostsSection = () => {
   const { data: posts = [], isLoading, isError } = useGetPublicPostsQuery();
+  const [previewPost, setPreviewPost] = useState(null); // 🆕
 
   if (isLoading) return <p className="text-white">Loading...</p>;
   if (isError) return <p className="text-red-500">Failed to load featured posts</p>;
@@ -24,10 +27,14 @@ const FeaturedPostsSection = () => {
         <div className="lg:col-span-2 group relative overflow-hidden rounded-2xl min-h-[280px]">
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0 transition-all group-hover:brightness-110" />
           <PostCard
+            id={mainPost._id}
             title={mainPost.title}
             image={mainPost.image}
             content={mainPost.content}
             category={mainPost.category}
+            author={mainPost.author}
+            createdAt={mainPost.createdAt}
+            onPreview={() => setPreviewPost(mainPost)} // 🆕 trigger modal
           />
         </div>
 
@@ -44,6 +51,15 @@ const FeaturedPostsSection = () => {
           ))}
         </div>
       </div>
+
+      {/* 🆕 Modal */}
+      {previewPost && (
+        <PostPreviewModal
+          {...previewPost}
+          id={previewPost._id}
+          onClose={() => setPreviewPost(null)}
+        />
+      )}
     </section>
   );
 };

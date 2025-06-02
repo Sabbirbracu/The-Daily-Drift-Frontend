@@ -1,18 +1,18 @@
 import { useParams } from "react-router-dom";
 import { useGetPostByIdQuery } from "../features/post/postApi";
 import CreatePost from "./CreatePost";
-const EditePost = () => {
+const EditPost = () => {
   const { id } = useParams();
-  const { isLoading, isError, error, data } = useGetPostByIdQuery(id);
-  console.log("🚀 ~ EditePost ~ data:", data);
+  const { data: post, isLoading, isError, error } = useGetPostByIdQuery(id);
+  console.log("🚀 ~ EditPost ~ post:", post);
 
   return (
     <div>
       {isLoading && <h1>Loading....</h1>}
       {!isLoading && isError && <h1>Something went wrong! {error.message}</h1>}
-      {data && <CreatePost post={data} />}
+      {post && <CreatePost post={post}/>}
     </div>
   );
 };
 
-export default EditePost;
+export default EditPost;

@@ -1,43 +1,20 @@
 import DOMPurify from "dompurify";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { FaFacebookF, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa";
-import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-import { useParams } from "react-router-dom";
-import CommentCard from "../components/card/CommentCard";
+import { Link, useParams } from "react-router-dom";
+import ParentComment from "../components/parentComment"; // Adjust path if needed
 import NewsLetter from "../components/sections/NewsLetter";
 import CategoryWidget from "../components/widgets/CategoryWidget";
 import PopularPostWidget from "../components/widgets/PopularPostsWidget";
-import {
-  useCreateCommentMutation,
-  useGetCommentsQuery,
-} from "../features/comment/commentApi";
+import { useGetCommentsQuery } from "../features/comment/commentApi";
 import { useGetPostByIdQuery } from "../features/post/postApi";
-import { Link } from "react-router-dom";
-
 
 const SinglePost = () => {
-  const [showComment, setShowComment] = useState(true);
   const { id } = useParams();
+  const [showComment, setShowComment] = useState(true);
+
   const { data: post, isLoading, isError, error } = useGetPostByIdQuery(id);
   const { data: commentData, refetch } = useGetCommentsQuery(id);
-  const [comment, setComment] = useState("");
-  const [createComment, { isLoading: isCreating }] = useCreateCommentMutation();
-
-  const handleCommentSubmit = async () => {
-    if (!comment.trim()) {
-      toast.error("Comment cannot be empty");
-      return;
-    }
-    try {
-      await createComment({ postId: id, content: comment }).unwrap();
-      toast.success("Comment added");
-      setComment("");
-      refetch();
-    } catch (err) {
-      toast.error(err?.data?.message || "Failed to add comment");
-    }
-  };
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -65,7 +42,7 @@ const SinglePost = () => {
 
             {/* Post Image */}
             <img
-              src={post.image || "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+              src={post.image || "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop"}
               alt={post.title}
               className="w-full h-auto max-h-[400px] object-cover rounded-lg mb-4"
             />
@@ -94,13 +71,10 @@ const SinglePost = () => {
             />
 
             {/* Tags / Categories */}
-            {post.categories && post.categories.length > 0 && (
+            {post.categories?.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {post.categories.map((cat) => (
-                  <span
-                    key={cat}
-                    className="bg-gray-700 text-white text-sm px-3 py-1 rounded-full"
-                  >
+                  <span key={cat} className="bg-gray-700 text-sm px-3 py-1 rounded-full">
                     #{cat}
                   </span>
                 ))}
@@ -143,48 +117,8 @@ const SinglePost = () => {
               </a>
             </div>
 
-            {/* Comment Toggle */}
-            <div className="mt-8">
-              <button
-                onClick={() => setShowComment((prev) => !prev)}
-                className="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition"
-              >
-                {showComment ? "Hide Comments" : "Show Comments"}
-                {showComment ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
-              </button>
-            </div>
-
-            {/* Comments Section */}
-            {showComment && (
-              <div className="mt-6 space-y-4">
-                {commentData?.comments?.length > 0 ? (
-                  commentData.comments.map((c) => (
-                    <CommentCard key={c._id} comment={c} />
-                  ))
-                ) : (
-                  <p className="text-gray-400">No comments yet.</p>
-                )}
-              </div>
-            )}
-
-            {/* Comment Input */}
-            <div className="mt-8">
-              <textarea
-                className="w-full bg-gray-800 border border-gray-600 rounded-md p-3 focus:outline-none text-white resize-none"
-                rows={4}
-                placeholder="Leave a comment..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              ></textarea>
-              <button
-                onClick={handleCommentSubmit}
-                className="mt-3 red-button px-5 rounded-md text-white transition"
-                style={{ fontSize: "18px" }}
-                disabled={isCreating}
-              >
-                {isCreating ? "Submitting..." : "Submit Comment"}
-              </button>
-            </div>
+            {/* Comment Section */}
+            <ParentComment commentData={commentData} postId={id} />
           </div>
 
           {/* Sidebar */}
@@ -195,7 +129,7 @@ const SinglePost = () => {
         </div>
       )}
 
-      {/* Newsletter Section */}
+      {/* Newsletter */}
       <div className="mt-16">
         <NewsLetter />
       </div>

@@ -1,13 +1,19 @@
-import { Share2 } from "lucide-react";
+import { Eye, Share2 } from "lucide-react";
 import PropTypes from "prop-types";
-import toast from "react-hot-toast";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import PostPreviewModal from "./modals/PostPreviewModal";
+import ShareModal from "./modals/shareModal";
 
-const PostCard = ({ id, title, image, content, category, author, createdAt }) => {
+const PostCard = ({ id, title, image, content, category, author, createdAt, onPreview }) => {
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+
   const defaultImage =
     "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
-  const displayAuthor = author || "Anonymous";
+  const displayAuthor = author ? author.displayName : "Anonymous";
+
   const displayDate = createdAt
     ? new Date(createdAt).toLocaleDateString("en-GB", {
         day: "2-digit",
@@ -16,53 +22,86 @@ const PostCard = ({ id, title, image, content, category, author, createdAt }) =>
       })
     : "Unknown Date";
 
-  const handleShare = (e) => {
-    e.stopPropagation(); // prevent link navigation
-    const url = `${window.location.origin}/post/${id}`;
-    navigator.clipboard.writeText(url)
-      .then(() => toast.success("Post link copied to clipboard!"))
-      .catch(() => toast.error("Failed to copy the link."));
-  };
-
   return (
-    <Link
-      to={`/post/${id}`}
-      className="relative rounded-xl border-2 overflow-hidden shadow-md bg-cover bg-center transform hover:scale-105 transition duration-300 flex flex-col justify-between"
-      style={{
-        backgroundImage: `url(${image || defaultImage})`,
-        minHeight: "370px",
-      }}
-    >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50"></div>
+    <>
+      <div
+        className="relative group h-80 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition duration-300 bg-cover bg-center border"
+        style={{ backgroundImage: `url(${image || defaultImage})` }}
+      >
+        {/* Dim background overlay */}
+        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-all duration-300" />
 
-      {/* Text content */}
-      <div className="relative z-10 p-4 text-white">
-        <p className="text-xs text-red-400 font-semibold mb-1">{category}</p>
-        <h2 className="text-2xl font-bold mb-2 line-clamp-2 hover:underline">{title}</h2>
-        {content && (
-          <p className="text-sm text-gray-200 line-clamp-2">{content}</p>
-        )}
-      </div>
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/50 to-transparent z-10" />
 
-      {/* Footer: Author, Date, Share */}
-      <div className="relative z-10 p-4 mt-auto text-sm text-gray-300 flex items-center justify-between bg-black/40 backdrop-blur-sm">
-        <div>
-          <p>
-            By <span className="text-white font-medium">{displayAuthor}</span>
-          </p>
-          <p>{displayDate}</p>
+        {/* Category Chip */}
+        <div className="absolute top-3 right-3 z-20">
+          <span className="bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md uppercase tracking-wider">
+            {category}
+          </span>
         </div>
 
-        <button
-          title="Copy post link"
-          className="p-2 rounded-full hover:bg-white/20 transition"
-          onClick={handleShare}
-        >
-          <Share2 className="text-white w-5 h-5" />
-        </button>
+        {/* Content */}
+        <div className="absolute inset-0 p-4 flex flex-col justify-between z-20">
+          {/* Title */}
+          <div className="mt-auto">
+            <Link to={`/post/${id}`}>
+              <h2 className="text-xl font-bold text-white drop-shadow-md hover:underline line-clamp-2">
+                {title}
+              </h2>
+            </Link>
+          </div>
+
+          {/* Footer: Author + Buttons */}
+          <div className="flex justify-between items-center text-sm text-gray-200 mt-4">
+            <div>
+              <p>
+                By <span className="font-medium text-white">{displayAuthor}</span>
+              </p>
+              <p>{displayDate}</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                title="Preview"
+                onClick={() => onPreview ? onPreview() : setShowPreviewModal(true)}
+                className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition"
+              >
+                <Eye className="w-4 h-4" />
+              </button>
+              <button
+                title="Share"
+                onClick={() => setShowShareModal(true)}
+                className="p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </Link>
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <ShareModal
+          url={`${window.location.origin}/post/${id}`}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <PostPreviewModal
+          id={id}
+          title={title}
+          image={image || defaultImage}
+          content={content}
+          author={author}
+          createdAt={createdAt}
+          onClose={() => setShowPreviewModal(false)}
+        />
+      )}
+    </>
   );
 };
 
@@ -74,6 +113,7 @@ PostCard.propTypes = {
   category: PropTypes.string.isRequired,
   author: PropTypes.string,
   createdAt: PropTypes.string,
+  onPreview: PropTypes.func,
 };
 
 export default PostCard;

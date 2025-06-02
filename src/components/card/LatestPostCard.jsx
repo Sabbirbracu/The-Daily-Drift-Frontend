@@ -68,7 +68,7 @@ const LatestPostCard = ({ post, showMenu = false, style}) => {
       {showMenu && user?.role && (
         <div className="hidden group-hover:flex absolute top-2.5 left-2.5 space-x-2.5 transition-all duration-700 z-10">
           <Link
-            to={`/dashboard-${user.role}/edite-post/${post._id}`}
+            to={`/dashboard-${user.role}/edit-post/${post._id}`}
             className="bg-yellow-400 px-4 py-2 rounded-md"
           >
             Edit
