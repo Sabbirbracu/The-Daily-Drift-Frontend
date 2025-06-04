@@ -23,6 +23,9 @@ import Category from "../Pages/AdminCategory.jsx";
 import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 
+import ProfileDetailsPage from "../Pages/profileDetails.jsx";
+import PublicProfilePage from "../Pages/publicProfilePage.jsx";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
@@ -42,6 +45,7 @@ const AppRoutes = () => {
             <Route path="post" element={<UserDashboardPost />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditeProfilePage />} />
+            <Route path="profile-details/:displayName" element={<ProfileDetailsPage />} /> {/* ✅ New Route */}
             <Route path="create-post" element={<CreatePost />} />
             <Route path="edit-post/:id" element={<EditPost />} />
           </Route>
@@ -60,8 +64,11 @@ const AppRoutes = () => {
             <Route path="posts" element={<ManagePosts />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditeProfilePage />} />
-            <Route path="category" element={<Category/>} />
+            <Route path="category" element={<Category />} />
           </Route>
+
+          {/* Public user profile route */}
+          <Route path="/users/:displayName" element={<PublicProfilePage />} /> {/* ✅ New Route */}
         </Route>
 
         {/* Catch-all Not Found Route */}
@@ -70,5 +77,6 @@ const AppRoutes = () => {
     </BrowserRouter>
   );
 };
+
 
 export default AppRoutes;
