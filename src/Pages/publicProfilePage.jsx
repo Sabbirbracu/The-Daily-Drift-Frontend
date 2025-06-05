@@ -1,118 +1,274 @@
-import toast from "react-hot-toast";
-import { FaShareAlt, FaUserCheck, FaUserPlus } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaFacebook, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useParams } from "react-router-dom";
+import Spinner from "../components/Spinner";
+import LatestPostCard from "../components/card/LatestPostCard";
+import ListPostCard from "../components/card/ListPostCard";
+import useAuth from "../features/auth/hooks/useAuth";
+import { useGetPostByIdQuery } from "../features/post/postApi";
 import {
-    useFollowUserMutation,
-    useGetMyProfileQuery,
-    useGetUserProfileDetailsQuery,
-    useUnfollowUserMutation,
+  useFollowUserMutation,
+  useGetMyProfileQuery,
+  useGetUserProfileDetailsQuery,
+  useUnfollowUserMutation,
 } from "../features/users/userApi";
 
 const PublicProfilePage = () => {
-  const { displayName } = useParams(); // e.g., /users/sabbir123
+  const { displayName } = useParams();
+  const { user } = useAuth();
 
-  const { data: publicProfile, isLoading, isError } =
-    useGetUserProfileDetailsQuery(displayName);
+  const {
+    data: profileData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetUserProfileDetailsQuery(displayName);
 
-  const { data: currentUser } = useGetMyProfileQuery(); // ✅ Corrected hook
+  const { data: currentUser } = useGetMyProfileQuery();
 
-  const [followUser] = useFollowUserMutation();
-  const [unfollowUser] = useUnfollowUserMutation();
+  const [followUser, { isLoading: isFollowingUser }] = useFollowUserMutation();
+  const [unfollowUser, { isLoading: isUnfollowingUser }] =
+    useUnfollowUserMutation();
 
-  const isOwnProfile = currentUser?.displayName === displayName;
-  const isFollowing = publicProfile?.followers?.includes(currentUser?._id);
+  const { data: pinnedPostData } = useGetPostByIdQuery(
+    profileData?.pinnedPost,
+    {
+      skip: !profileData?.pinnedPost,
+    }
+  );
 
-  const handleShare = () => {
-    const link = `${window.location.origin}/users/${displayName}`;
-    navigator.clipboard.writeText(link);
-    toast.success("Profile link copied to clipboard!");
-  };
+  const [isFollowingLocal, setIsFollowingLocal] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+
+  useEffect(() => {
+    if (profileData?.followers && currentUser?._id) {
+      const isFollowing = profileData.followers.includes(currentUser._id);
+      setIsFollowingLocal(isFollowing);
+      setFollowerCount(profileData.followers.length);
+    }
+  }, [profileData?.followers, currentUser?._id]);
+
+  if (isLoading) return <Spinner />;
+  if (isError || !profileData)
+    return <div className="text-center py-10">User not found</div>;
+
+  const {
+    fullName,
+    displayName: name,
+    profileImage,
+    bannerImage,
+    bio,
+    aboutMe,
+    socialLinks,
+    expertise = [],
+    readingList = [],
+  } = profileData;
+
+  const isCurrentUser = currentUser?.displayName === displayName;
 
   const handleFollowToggle = async () => {
+    if (!displayName || !currentUser?._id) return;
+
     try {
-      if (isFollowing) {
-        await unfollowUser(publicProfile._id).unwrap();
-        toast.success("Unfollowed");
+      if (isFollowingLocal) {
+        const res = await unfollowUser(displayName).unwrap();
+        if (res.success) {
+          setIsFollowingLocal(false);
+          setFollowerCount((prev) => Math.max(0, prev - 1));
+          refetch(); // Refetch profile to sync followers
+        }
       } else {
-        await followUser(publicProfile._id).unwrap();
-        toast.success("Followed");
+        const res = await followUser(displayName).unwrap();
+        if (res.success) {
+          setIsFollowingLocal(true);
+          setFollowerCount((prev) => prev + 1);
+          refetch(); // Refetch profile to sync followers
+        }
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+    } catch (err) {
+      console.error("Follow/Unfollow failed", err);
     }
   };
 
-  if (isLoading) return <p className="text-white">Loading profile...</p>;
-  if (isError || !publicProfile)
-    return <p className="text-red-500">Failed to load profile.</p>;
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white dark:bg-zinc-900 rounded-xl shadow-lg">
-      <div className="flex flex-col items-center text-center space-y-4">
-        <img
-          src={publicProfile.profileImage || "/default-avatar.png"}
-          alt="Profile"
-          className="w-28 h-28 rounded-full object-cover border-4 border-red-500"
-        />
-        <h2 className="text-2xl font-bold text-zinc-800 dark:text-white">
-          {publicProfile.fullName}
-        </h2>
-        <p className="text-sm text-zinc-500 dark:text-gray-300">
-          @{publicProfile.displayName}
-        </p>
-
-        {publicProfile.bio && (
-          <p className="text-md text-gray-700 dark:text-gray-300 italic">
-            {publicProfile.bio}
-          </p>
+    <div className="max-w-5xl mx-auto text-gray-800 dark:text-white pb-20">
+      {/* Banner */}
+      <div className="relative h-60 sm:h-72 bg-gray-200 dark:bg-zinc-800 rounded-b-2xl overflow-hidden shadow-sm">
+        {bannerImage && (
+          <img
+            src={bannerImage}
+            alt="Banner"
+            className="w-full h-full object-cover"
+          />
         )}
+      </div>
 
-        <p className="text-sm text-zinc-400">
-          {publicProfile.followers?.length || 0} followers
-        </p>
-
-        <div className="flex gap-4 mt-4">
-          {!isOwnProfile && (
-            <button
-              onClick={handleFollowToggle}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                isFollowing
-                  ? "bg-gray-300 text-black"
-                  : "bg-red-500 text-white"
-              }`}
-            >
-              {isFollowing ? (
-                <span className="flex items-center gap-1">
-                  <FaUserCheck /> Unfollow
-                </span>
-              ) : (
-                <span className="flex items-center gap-1">
-                  <FaUserPlus /> Follow
-                </span>
-              )}
-            </button>
-          )}
-
-          <button
-            onClick={handleShare}
-            className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium flex items-center gap-1"
-          >
-            <FaShareAlt /> Share Profile
-          </button>
+      {/* Profile Image */}
+      <div className="relative px-6">
+        <div className="absolute -top-14 sm:-top-16 left-6 sm:left-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden shadow-md z-10">
+          <img
+            src={profileImage}
+            alt="Avatar"
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
 
-      {publicProfile.aboutMe && (
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold text-zinc-800 dark:text-white mb-2">
-            About Me
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300">
-            {publicProfile.aboutMe}
+      {/* Main Info */}
+      <div className="mt-16 sm:mt-20 px-6 sm:px-10">
+        <div className="flex items-start justify-between flex-wrap gap-2">
+          <div>
+            <h2 className="text-3xl font-bold">{fullName}</h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">{name}</p>
+          </div>
+
+          {/* Follow Button */}
+          {currentUser && !isCurrentUser && (
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-gray-600 dark:text-gray-300">
+                {followerCount} Followers
+              </span>
+              <button
+                onClick={handleFollowToggle}
+                disabled={isFollowingUser || isUnfollowingUser}
+                className={`px-5 py-1.5 rounded-full font-medium transition border shadow-sm ${
+                  isFollowingLocal
+                    ? "bg-white dark:bg-zinc-900 text-gray-800 dark:text-white border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800"
+                    : "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                }`}
+              >
+                {isFollowingUser || isUnfollowingUser
+                  ? isFollowingLocal
+                    ? "Unfollowing..."
+                    : "Following..."
+                  : isFollowingLocal
+                  ? "Following"
+                  : "Follow"}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Bio */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-1">Bio</h3>
+          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+            {bio || (
+              <span className="text-gray-400">No bio available.</span>
+            )}
           </p>
         </div>
-      )}
+
+        {/* About Me */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-1">About Me</h3>
+          <p className="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed">
+            {aboutMe || (
+              <span className="text-gray-400">
+                No about me information available.
+              </span>
+            )}
+          </p>
+        </div>
+
+        {/* Social Handles */}
+        {socialLinks && (
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-1">Social Handles</h3>
+            <div className="flex gap-4 mt-2">
+              {socialLinks.facebook && (
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FaFacebook
+                    className="text-blue-600 hover:text-blue-800"
+                    size={22}
+                  />
+                </a>
+              )}
+              {socialLinks.linkedin && (
+                <a
+                  href={socialLinks.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FaLinkedin
+                    className="text-blue-500 hover:text-blue-700"
+                    size={22}
+                  />
+                </a>
+              )}
+              {socialLinks.github && (
+                <a href={socialLinks.github} target="_blank" rel="noreferrer">
+                  <FaGithub
+                    className="text-gray-800 dark:text-white hover:text-gray-700"
+                    size={22}
+                  />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a href={socialLinks.twitter} target="_blank" rel="noreferrer">
+                  <FaTwitter
+                    className="text-sky-500 hover:text-sky-700"
+                    size={22}
+                  />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Expertise */}
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold mb-1">Expertise</h3>
+          {expertise.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {expertise.map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-zinc-100 dark:bg-zinc-700 px-4 py-1 rounded-full text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              No expertise tags available.
+            </p>
+          )}
+        </div>
+
+        {/* Pinned Post */}
+        <div className="mt-8 max-w-md">
+          <h3 className="text-xl font-semibold mb-3">📌 Pinned Post</h3>
+          {pinnedPostData ? (
+            <LatestPostCard post={pinnedPostData} showMenu={false} />
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              No pinned post available.
+            </p>
+          )}
+        </div>
+
+        {/* Reading List */}
+        <div className="mt-8 max-w-2xl">
+          <h3 className="text-xl font-semibold mb-3">📖 Reading List</h3>
+          {readingList.length > 0 ? (
+            <div className="space-y-4">
+              {readingList.map((postId) => (
+                <ListPostCard key={postId} id={postId} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              No posts in reading list yet.
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

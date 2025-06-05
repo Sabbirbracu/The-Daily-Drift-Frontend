@@ -1,30 +1,29 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "../App.jsx";
 import About from "../components/about.jsx";
+import AdminLayout from "../layouts/AdminLayouts.jsx";
+import UserLayout from "../layouts/UserLayout.jsx";
+import Category from "../Pages/AdminCategory.jsx";
 import AdminDashboard from "../Pages/AdminDashboard.jsx";
 import AllPosts from "../Pages/AllPosts.jsx";
 import Contact from "../Pages/contact.jsx";
 import CreatePost from "../Pages/CreatePost.jsx";
+import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import EditPost from "../Pages/EditPost.jsx";
 import Home from "../Pages/Home.jsx";
 import Login from "../Pages/Login.jsx";
 import ManagePosts from "../Pages/ManagePosts.jsx";
 import ManageUsers from "../Pages/ManageUsers.jsx";
 import NotFound from "../Pages/NotFound.jsx";
+import PublicProfilePage from "../Pages/publicProfilePage.jsx";
 import Register from "../Pages/Register.jsx";
 import SinglePost from "../Pages/SinglePost.jsx";
 import UserDashboard from "../Pages/UserDashboard.jsx";
 import UserDashboardPost from "../Pages/UserDashboardPost.jsx";
 import UserProfile from "../Pages/UserProfile.jsx";
-
-import AdminLayout from "../layouts/AdminLayouts.jsx";
-import UserLayout from "../layouts/UserLayout.jsx";
-import Category from "../Pages/AdminCategory.jsx";
-import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
 
 import ProfileDetailsPage from "../Pages/profileDetails.jsx";
-import PublicProfilePage from "../Pages/publicProfilePage.jsx";
 
 const AppRoutes = () => {
   return (
@@ -68,7 +67,7 @@ const AppRoutes = () => {
           </Route>
 
           {/* Public user profile route */}
-          <Route path="/users/:displayName" element={<PublicProfilePage />} /> {/* ✅ New Route */}
+          <Route path="/author/:displayName" element={<PublicProfilePage />} /> {/* ✅ New Route */}
         </Route>
 
         {/* Catch-all Not Found Route */}

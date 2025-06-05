@@ -49,7 +49,7 @@ const SinglePost = () => {
 
             {/* Author Info */}
             <div className="flex items-center justify-between mb-6 text-sm text-gray-400 px-1">
-              <Link to={`/author/${post.author?._id}`} className="flex items-center gap-2 hover:underline">
+              <Link to={`/author/${post.author?.displayName}`} className="flex items-center gap-2 hover:underline">
                 <img
                   src={post.author?.profileImage || "https://ui-avatars.com/api/?name=Unknown&background=random"}
                   alt={post.author?.displayName || "Author"}

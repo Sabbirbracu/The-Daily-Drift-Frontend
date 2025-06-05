@@ -75,23 +75,46 @@ export const userApi = createApi({
         { type: "User", id: displayName },
       ],
     }),
-
-    // ✅ Follow user
-    followUser: builder.mutation({
-      query: (userId) => ({
-        url: `/users/${userId}/follow`,
-        method: "POST",
-      }),
-      invalidatesTags: ["User"],
+    getAllAuthors: builder.query({
+      query: () => "/users/public-authors",
+      providesTags: ["User"],
     }),
 
-    // ✅ Unfollow user
-    unfollowUser: builder.mutation({
-      query: (userId) => ({
-        url: `/users/${userId}/unfollow`,
+    // ✅ Follow user
+    // followUser: builder.mutation({
+    //   query: (userId) => ({
+    //     url: `/users/${userId}/follow`,
+    //     method: "POST",
+    //   }),
+    //   invalidatesTags: ["User"],
+    // }),
+
+    // // ✅ Unfollow user
+    // unfollowUser: builder.mutation({
+    //   query: (userId) => ({
+    //     url: `/users/${userId}/unfollow`,
+    //     method: "POST",
+    //   }),
+    //   invalidatesTags: ["User"],
+    // }),
+    // userApi.js
+    followUser: builder.mutation({
+      query: (displayName) => ({
+        url: `/users/${displayName}/follow`,
         method: "POST",
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: (result, error, displayName) => [
+        { type: "User", id: displayName },
+      ],
+    }),
+    unfollowUser: builder.mutation({
+      query: (displayName) => ({
+        url: `/users/${displayName}/unfollow`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, displayName) => [
+        { type: "User", id: displayName },
+      ],
     }),
 
     // ✅ Leaderboard
@@ -123,6 +146,7 @@ export const {
 
   // Public profile
   useGetUserProfileDetailsQuery,
+  useGetAllAuthorsQuery,
   useFollowUserMutation,
   useUnfollowUserMutation,
 

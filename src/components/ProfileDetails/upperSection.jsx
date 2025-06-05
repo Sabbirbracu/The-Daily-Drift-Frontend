@@ -6,6 +6,7 @@ import {
   useUpdateProfileDetailsMutation,
 } from "../../features/users/userApi";
 import Spinner from "../Spinner";
+import ShareModal from "../modals/shareModal"; // update the path if needed
 
 // Cloudinary config
 const cloudUrl = import.meta.env.VITE_CLOUDINARY_URL;
@@ -25,6 +26,7 @@ const UpperSection = () => {
   const [bannerUrl, setBannerUrl] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const bannerInputRef = useRef(null);
   const profileInputRef = useRef(null);
@@ -37,9 +39,7 @@ const UpperSection = () => {
   }, [user]);
 
   const handleShare = () => {
-    const shareLink = `${window.location.origin}/profile/${user?.displayName}`;
-    navigator.clipboard.writeText(shareLink);
-    alert("Profile link copied to clipboard!");
+    setShowShareModal(true);
   };
 
   const uploadToCloudinary = async (file) => {
@@ -143,7 +143,7 @@ const UpperSection = () => {
               {user?.displayName}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-300">
-              Following {user?.followingCount || 0} people
+              {user?.profileDetails.followers?.length || 0} Followers • {user?.profileDetails.following?.length || 0} Following
             </p>
           </div>
         </div>
@@ -156,6 +156,13 @@ const UpperSection = () => {
           >
             Share Profile
           </button>
+          {showShareModal && (
+            <ShareModal
+              url={`http:localhost:5173/dashboard-user/public-profile-details/${user.displayName}`}
+              onClose={() => setShowShareModal(false)}
+            />
+          )}
+
         </div>
       </div>
 
