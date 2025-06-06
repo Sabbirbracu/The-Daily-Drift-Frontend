@@ -38,11 +38,16 @@ export const commentApi = createApi({
 
     // ✅ React to comment
     reactToComment: builder.mutation({
-      query: ({ commentId, reactionType }) => ({
-        url: `/comments/react/${commentId}`,
-        method: "POST",
-        body: { reactionType },
-      }),
+      query: ({ commentId, reactionType }) => {
+        const type =
+          typeof reactionType === "string" ? reactionType.toLowerCase() : null;
+
+        return {
+          url: `/comments/react/${commentId}`,
+          method: "POST",
+          body: { type },
+        };
+      },
       invalidatesTags: (result, error, { commentId }) => [
         { type: "Comment", id: commentId },
       ],

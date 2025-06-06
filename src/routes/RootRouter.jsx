@@ -10,6 +10,7 @@ import Contact from "../Pages/contact.jsx";
 import CreatePost from "../Pages/CreatePost.jsx";
 import EditeProfilePage from "../Pages/EditeProfilePage.jsx";
 import EditPost from "../Pages/EditPost.jsx";
+import ForgotPassword from "../Pages/ForgetPassword";
 import Home from "../Pages/Home.jsx";
 import Login from "../Pages/Login.jsx";
 import ManagePosts from "../Pages/ManagePosts.jsx";
@@ -17,13 +18,12 @@ import ManageUsers from "../Pages/ManageUsers.jsx";
 import NotFound from "../Pages/NotFound.jsx";
 import PublicProfilePage from "../Pages/publicProfilePage.jsx";
 import Register from "../Pages/Register.jsx";
+import { default as ProfileDetailsPage, default as ResetPassword } from "../Pages/ResetPassword.jsx";
 import SinglePost from "../Pages/SinglePost.jsx";
 import UserDashboard from "../Pages/UserDashboard.jsx";
 import UserDashboardPost from "../Pages/UserDashboardPost.jsx";
 import UserProfile from "../Pages/UserProfile.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
-
-import ProfileDetailsPage from "../Pages/profileDetails.jsx";
 
 const AppRoutes = () => {
   return (
@@ -33,6 +33,8 @@ const AppRoutes = () => {
           <Route index element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/posts" element={<AllPosts />} />

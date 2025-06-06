@@ -15,6 +15,7 @@ const SinglePost = () => {
 
   const { data: post, isLoading, isError, error } = useGetPostByIdQuery(id);
   const { data: commentData, refetch } = useGetCommentsQuery(id);
+  console.log("Post Data:", post);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -36,7 +37,7 @@ const SinglePost = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Main Content */}
           <div className="md:col-span-8">
-            <h1 className="text-4xl font-bold mb-4 text-center capitalize">
+            <h1 className="text-5xl font-extrabold mb-6 text-center capitalize leading-tight">
               {post.title}
             </h1>
 
@@ -48,12 +49,12 @@ const SinglePost = () => {
             />
 
             {/* Author Info */}
-            <div className="flex items-center justify-between mb-6 text-sm text-gray-400 px-1">
+            <div className="flex items-center justify-between mb-6 text-md text-gray-400 px-1">
               <Link to={`/author/${post.author?.displayName}`} className="flex items-center gap-2 hover:underline">
                 <img
                   src={post.author?.profileImage || "https://ui-avatars.com/api/?name=Unknown&background=random"}
                   alt={post.author?.displayName || "Author"}
-                  className="w-8 h-8 rounded-full object-cover border border-gray-700"
+                  className="w-12 h-12 rounded-full object-cover border border-gray-700"
                 />
                 <span className="font-medium text-white">
                   {post.author?.displayName || "Unknown Author"}
@@ -64,11 +65,12 @@ const SinglePost = () => {
 
             {/* Post Content */}
             <div
-              className="prose prose-invert max-w-full"
+              className="post-content"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(post.content),
               }}
             />
+
 
             {/* Tags / Categories */}
             {post.categories?.length > 0 && (

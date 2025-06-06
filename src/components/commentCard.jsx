@@ -1,35 +1,82 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { FaRegSmile, FaReply } from "react-icons/fa";
+import { FaRegSmile, FaReply, FaTrash } from "react-icons/fa";
+import useAuth from "../features/auth/hooks/useAuth";
+import {
+  useCreateCommentMutation,
+  useDeleteCommentMutation,
+  useReactToCommentMutation,
+} from "../features/comment/commentApi";
 
 const reactions = [
-  { emoji: "👍", label: "Like" },
-  { emoji: "😂", label: "Haha" },
-  { emoji: "😡", label: "Angry" },
-  { emoji: "😢", label: "Sad" },
-  { emoji: "❤️", label: "Love" },
+  { emoji: "👍", label: "like" },
+  { emoji: "😂", label: "haha" },
+  { emoji: "😡", label: "angry" },
+  { emoji: "😢", label: "sad" },
+  { emoji: "❤️", label: "love" },
 ];
 
-const CommentCard = ({ comment }) => {
+const CommentCard = ({ comment, postId, refetch, replies = [] }) => {
   const [showReactions, setShowReactions] = useState(false);
   const [showReplyBox, setShowReplyBox] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const [replyText, setReplyText] = useState("");
 
-  const handleReplySubmit = () => {
-    // TODO: Connect to backend or callback
-    console.log("Reply submitted:", replyText);
-    setReplyText("");
-    setShowReplyBox(false);
+  const [createComment] = useCreateCommentMutation();
+  const [deleteComment] = useDeleteCommentMutation();
+  const [reactToComment] = useReactToCommentMutation();
+
+  const { user } = useAuth();
+
+  const uniqueReactionTypes = [
+    ...new Set(comment.reactions?.map((r) => r.type)),
+  ];
+  const displayedReactions = reactions.filter((r) =>
+    uniqueReactionTypes.includes(r.label)
+  );
+
+  const handleReplySubmit = async () => {
+    if (!replyText.trim()) return;
+    try {
+      await createComment({
+        postId,
+        content: replyText,
+        parentComment: comment._id,
+      }).unwrap();
+      setReplyText("");
+      setShowReplyBox(false);
+      refetch();
+    } catch (err) {
+      console.error("Reply failed:", err);
+    }
   };
 
-  const handleReaction = (reaction) => {
-    console.log(`Reacted with: ${reaction}`);
-    setShowReactions(false);
-    // TODO: Connect to backend here
+  const handleDelete = async () => {
+    try {
+      await deleteComment(comment._id).unwrap();
+      refetch();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
+
+  const handleReaction = async (reactionLabel) => {
+    const reactionType = reactionLabel.toLowerCase();
+    try {
+      await reactToComment({
+        commentId: comment._id,
+        reactionType,
+      });
+      await refetch();
+    } catch (err) {
+      console.error("Reaction failed:", err?.data?.message || "Unknown error");
+    } finally {
+      setShowReactions(false);
+    }
   };
 
   return (
-    <div className="flex items-start gap-4 bg-gray-800 p-4 rounded-lg relative">
+    <div className="flex items-start gap-4 bg-gray-800 p-4 rounded-lg relative my-3">
       {/* Avatar */}
       <img
         src={
@@ -40,16 +87,26 @@ const CommentCard = ({ comment }) => {
         className="w-10 h-10 rounded-full object-cover"
       />
 
-      {/* Content */}
+      {/* Main Comment Content */}
       <div className="flex-1">
         <p className="font-semibold text-white">
           {comment.author?.displayName || "Anonymous"}
         </p>
-        <p className="text-gray-300 mt-1">{comment.text}</p>
+        <p className="text-gray-300 mt-1">{comment.content}</p>
 
-        {/* Actions */}
+        {/* Reactions Display */}
+        {displayedReactions.length > 0 && (
+          <div className="mt-2 flex gap-1 text-xl">
+            {displayedReactions.map((r) => (
+              <span key={r.label} title={r.label}>
+                {r.emoji}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Action Buttons */}
         <div className="flex items-center gap-4 text-sm text-gray-400 mt-2 relative">
-          {/* Reply */}
           <button
             className="hover:text-white flex items-center gap-1"
             onClick={() => setShowReplyBox((prev) => !prev)}
@@ -66,20 +123,21 @@ const CommentCard = ({ comment }) => {
               <FaRegSmile /> React
             </button>
 
+            {/* Fancy Reaction Popup */}
             <AnimatePresence>
               {showReactions && (
                 <motion.div
-                  className="absolute left-0 bottom-full mt-2 bg-gray-700 p-1 rounded-xl shadow-lg flex gap-1 z-10"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute left-0 bottom-full mb-3 bg-gray-900 border border-gray-600 p-2 rounded-full shadow-xl flex gap-2 z-10"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                 >
                   {reactions.map((r) => (
                     <button
                       key={r.label}
                       title={r.label}
                       onClick={() => handleReaction(r.label)}
-                      className="text-xl hover:scale-125 transition-all px-1 py-1"
+                      className="text-2xl hover:scale-125 transition-all px-1"
                     >
                       {r.emoji}
                     </button>
@@ -88,6 +146,16 @@ const CommentCard = ({ comment }) => {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Delete */}
+          {user?._id === comment.author?._id && (
+            <button
+              className="hover:text-red-400 flex items-center gap-1"
+              onClick={handleDelete}
+            >
+              <FaTrash /> Delete
+            </button>
+          )}
         </div>
 
         {/* Reply Box */}
@@ -103,11 +171,38 @@ const CommentCard = ({ comment }) => {
             <div className="flex justify-end mt-2">
               <button
                 onClick={handleReplySubmit}
-                className="text-sm px-4 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md transition"
+                className="text-sm px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition"
               >
                 Submit Reply
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Toggle Replies */}
+        {replies?.length > 0 && (
+          <button
+            onClick={() => setShowReplies((prev) => !prev)}
+            className="text-xs mt-3 text-blue-400 hover:underline"
+          >
+            {showReplies
+              ? `Hide Replies`
+              : `View Replies (${replies.length})`}
+          </button>
+        )}
+
+        {/* Replies */}
+        {showReplies && replies?.length > 0 && (
+          <div className="mt-4 pl-6 border-l border-gray-600 space-y-3">
+            {replies.map((reply) => (
+              <CommentCard
+                key={reply._id}
+                comment={reply}
+                postId={postId}
+                refetch={refetch}
+                replies={reply.replies}
+              />
+            ))}
           </div>
         )}
       </div>

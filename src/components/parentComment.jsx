@@ -1,11 +1,9 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
 import CommentsSection from "../components/commentsSection";
 
-const ParentComment = ({ commentData, parentCommentId = null }) => {
+const ParentComment = ({ commentData, parentCommentId = null, postId }) => {
   // Added optional parentCommentId prop (null by default)
-  const { postId } = useParams();
   const [comment, setComment] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
@@ -45,6 +43,7 @@ const ParentComment = ({ commentData, parentCommentId = null }) => {
 
   return (
     <CommentsSection
+      postId={postId}
       commentData={commentData}
       comment={comment}
       setComment={setComment}
