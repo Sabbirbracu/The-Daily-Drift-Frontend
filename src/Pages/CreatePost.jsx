@@ -13,13 +13,14 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner"; // Adjust path if needed
 import Toolbar from "../components/Toolbar";
+import '../editorStyles.css'; // or './editorStyles.css' if it's in the same folder
 import useAuth from "../features/auth/hooks/useAuth";
 import { useGetCategoriesQuery } from "../features/category/categoryApi"; // adjust path as needed
 import {
   useCreatePostMutation,
   useUpdatePostMutation,
 } from "../features/post/postApi";
-import '/Users/sabbirahmad/The Daily Drift/frontend/src/editorStyles.css';
+
 
 
 const CreatePost = ({ post = null }) => {
