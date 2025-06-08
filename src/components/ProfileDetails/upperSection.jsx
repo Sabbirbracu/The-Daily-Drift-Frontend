@@ -138,7 +138,7 @@ const UpperSection = () => {
               onChange={handleProfileUpload}
             />
           </div>
-          <div className="text-center sm:text-left">
+          <div className="text-center sm:text-left lg:pt-18">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {user?.fullName}
             </h2>
@@ -151,7 +151,7 @@ const UpperSection = () => {
         </div>
 
         {/* Share button */}
-        <div className="w-full md:w-auto flex justify-center md:justify-end">
+        <div className="w-full md:w-auto flex justify-center md:justify-end pt-0">
           <button
             onClick={handleShare}
             className="px-4 py-2 bg-red-500 text-white dark:text-white rounded hover:bg-white dark:hover:bg-zinc-600 hover:text-black transition"
