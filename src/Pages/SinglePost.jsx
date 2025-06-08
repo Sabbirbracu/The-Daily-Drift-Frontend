@@ -2,7 +2,7 @@ import DOMPurify from "dompurify";
 import { useState } from "react";
 import { FaFacebookF, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import ParentComment from "../components/parentComment"; // Adjust path if needed
+import ParentComment from "../components/parentComment";
 import NewsLetter from "../components/sections/NewsLetter";
 import CategoryWidget from "../components/widgets/CategoryWidget";
 import PopularPostWidget from "../components/widgets/PopularPostsWidget";
@@ -14,8 +14,7 @@ const SinglePost = () => {
   const [showComment, setShowComment] = useState(true);
 
   const { data: post, isLoading, isError, error } = useGetPostByIdQuery(id);
-  const { data: commentData, refetch } = useGetCommentsQuery(id);
-  console.log("Post Data:", post);
+  const { data: commentData } = useGetCommentsQuery(id);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -37,46 +36,57 @@ const SinglePost = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Main Content */}
           <div className="md:col-span-8">
-            <h1 className="text-5xl font-extrabold mb-6 text-center capitalize leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-center capitalize leading-tight">
               {post.title}
             </h1>
 
             {/* Post Image */}
             <img
-              src={post.image || "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop"}
+              src={
+                post.image ||
+                "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop"
+              }
               alt={post.title}
               className="w-full h-auto max-h-[400px] object-cover rounded-lg mb-4"
             />
 
             {/* Author Info */}
-            <div className="flex items-center justify-between mb-6 text-md text-gray-400 px-1">
-              <Link to={`/author/${post.author?.displayName}`} className="flex items-center gap-2 hover:underline">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 text-sm text-gray-400 gap-3 px-1">
+              <Link
+                to={`/author/${post.author?.displayName}`}
+                className="flex items-center gap-2 hover:underline"
+              >
                 <img
-                  src={post.author?.profileImage || "https://ui-avatars.com/api/?name=Unknown&background=random"}
+                  src={
+                    post.author?.profileImage ||
+                    "https://ui-avatars.com/api/?name=Unknown&background=random"
+                  }
                   alt={post.author?.displayName || "Author"}
-                  className="w-12 h-12 rounded-full object-cover border border-gray-700"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border border-gray-700"
                 />
-                <span className="font-medium text-white">
+                <span className="font-medium text-white text-sm sm:text-base">
                   {post.author?.displayName || "Unknown Author"}
                 </span>
               </Link>
-              <p>{formatDate(post.createdAt)}</p>
+              <p className="text-xs sm:text-sm">{formatDate(post.createdAt)}</p>
             </div>
 
             {/* Post Content */}
             <div
-              className="post-content"
+              className="post-content text-base sm:text-lg"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(post.content),
               }}
             />
 
-
             {/* Tags / Categories */}
             {post.categories?.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {post.categories.map((cat) => (
-                  <span key={cat} className="bg-gray-700 text-sm px-3 py-1 rounded-full">
+                  <span
+                    key={cat}
+                    className="bg-gray-700 text-sm px-3 py-1 rounded-full"
+                  >
                     #{cat}
                   </span>
                 ))}
@@ -84,7 +94,7 @@ const SinglePost = () => {
             )}
 
             {/* Social Share Buttons */}
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-6 flex flex-wrap gap-4">
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
                 target="_blank"
@@ -124,7 +134,7 @@ const SinglePost = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="md:col-span-4 space-y-6">
+          <div className="md:col-span-4 space-y-6 mt-10 md:mt-0">
             <PopularPostWidget />
             <CategoryWidget />
           </div>

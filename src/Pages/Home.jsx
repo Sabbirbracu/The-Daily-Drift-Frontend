@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import HeroSection from "../components/sections/HeroSection";
 import NewsLetter from "../components/sections/NewsLetter";
@@ -8,17 +7,18 @@ const Home = () => {
   return (
     <div>
       <HeroSection />
-      {/* All Posts Link */}
-      <div className="text-center my-6">
+
+      {/* View All Posts Button */}
+      <div className="text-center my-8">
         <Link
           to="/posts"
-          className="text-blue-600 font-semibold hover:underline"
+          className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-full shadow-md hover:bg-blue-700 transition duration-300"
         >
           View All Blog Posts →
         </Link>
       </div>
-      <PostSection />
 
+      <PostSection />
       <NewsLetter />
     </div>
   );

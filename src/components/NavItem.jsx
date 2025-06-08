@@ -73,14 +73,16 @@ const NavItem = ({ categories }) => {
               </Link>
             </li>
             <li className="hover:bg-gray-200 px-4 py-2">
-              <Link to="/dahboard-user/create-post">Create Post</Link>
+              <Link to={`/dashboard-${user.role.toLowerCase()}/create-post`}>
+                Create New Post
+              </Link>
             </li>
             <li className="hover:bg-gray-200 px-4 py-2">
               <Link to={`/dashboard-${user.role}/profile`}>User Profile</Link>
             </li>
-            <li className="hover:bg-gray-200 px-4 py-2">
+            {/* <li className="hover:bg-gray-200 px-4 py-2">
               <Link to={`/dashboard-${user.role}/settings`}>Settings</Link>
-            </li>
+            </li> */}
             <li
               onClick={() => {
                 logout();

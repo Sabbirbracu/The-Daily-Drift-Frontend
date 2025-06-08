@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "../App.jsx";
 import About from "../components/about.jsx";
+import PrivacyPolicy from "../components/Privacy&Policy.jsx";
+import TermsAndConditions from "../components/Terms&Condition.jsx";
 import AdminLayout from "../layouts/AdminLayouts.jsx";
 import UserLayout from "../layouts/UserLayout.jsx";
 import Category from "../Pages/AdminCategory.jsx";
@@ -16,9 +18,10 @@ import Login from "../Pages/Login.jsx";
 import ManagePosts from "../Pages/ManagePosts.jsx";
 import ManageUsers from "../Pages/ManageUsers.jsx";
 import NotFound from "../Pages/NotFound.jsx";
+import ProfileDetailsPage from "../Pages/profileDetails.jsx";
 import PublicProfilePage from "../Pages/publicProfilePage.jsx";
 import Register from "../Pages/Register.jsx";
-import { default as ProfileDetailsPage, default as ResetPassword } from "../Pages/ResetPassword.jsx";
+import ResetPassword from "../Pages/ResetPassword.jsx";
 import SinglePost from "../Pages/SinglePost.jsx";
 import UserDashboard from "../Pages/UserDashboard.jsx";
 import UserDashboardPost from "../Pages/UserDashboardPost.jsx";
@@ -39,6 +42,8 @@ const AppRoutes = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/posts" element={<AllPosts />} />
           <Route path="/post/:id" element={<SinglePost />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* user routes */}
           <Route path="/dashboard-user" element={<UserLayout />}>
@@ -66,6 +71,7 @@ const AppRoutes = () => {
             <Route path="profile" element={<UserProfile />} />
             <Route path="edit-profile" element={<EditeProfilePage />} />
             <Route path="category" element={<Category />} />
+            <Route path="create-post" element={<CreatePost />} />
           </Route>
 
           {/* Public user profile route */}

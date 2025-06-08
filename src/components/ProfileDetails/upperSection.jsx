@@ -16,7 +16,9 @@ const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUDNAME;
 const placeholderBanner =
   "https://via.placeholder.com/1200x300?text=Banner+Image";
 const placeholderProfile =
-  "https://via.placeholder.com/150?text=Profile+Image";
+  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
+// (no imports changed)
 
 const UpperSection = () => {
   const { data: user, isLoading } = useGetMyProfileQuery();
@@ -38,9 +40,7 @@ const UpperSection = () => {
     }
   }, [user]);
 
-  const handleShare = () => {
-    setShowShareModal(true);
-  };
+  const handleShare = () => setShowShareModal(true);
 
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
@@ -86,7 +86,7 @@ const UpperSection = () => {
     }
   };
 
-  if (isLoading) return < Spinner size="lg" />;
+  if (isLoading) return <Spinner size="lg" />;
 
   return (
     <div className="relative w-full">
@@ -113,65 +113,66 @@ const UpperSection = () => {
         />
       </div>
 
-      {/* Profile image + Info + Buttons */}
-      <div className="flex flex-col md:flex-row items-center md:items-end justify-between px-6 md:px-12 py-4 -mt-20 relative z-10">
-        <div className="flex items-center gap-4 relative">
-          <img
-            src={profileUrl || placeholderProfile}
-            alt="Profile"
-            className="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-800 shadow-lg object-cover"
-          />
-          <button
-            onClick={() => profileInputRef.current.click()}
-            className="absolute bottom-2 left-28 bg-white dark:bg-zinc-700 p-1 rounded-full shadow"
-            title="Edit Profile Picture"
-          >
-            <FiEdit className="text-gray-700 dark:text-sky-500" />
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            ref={profileInputRef}
-            className="hidden"
-            onChange={handleProfileUpload}
-          />
-          <div>
-            <h2 className="text-3xl pt-18 content-font font-bold text-gray-900 dark:text-white">
+      {/* Profile info section */}
+      <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-4 px-4 sm:px-6 md:px-12 py-4 -mt-20 relative z-10">
+        {/* Profile image + name */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 relative">
+          <div className="relative">
+            <img
+              src={profileUrl || placeholderProfile}
+              alt="Profile"
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-zinc-800 shadow-lg object-cover"
+            />
+            <button
+              onClick={() => profileInputRef.current.click()}
+              className="absolute bottom-2 right-2 bg-white dark:bg-zinc-700 p-1 rounded-full shadow"
+              title="Edit Profile Picture"
+            >
+              <FiEdit className="text-gray-700 dark:text-sky-500" />
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={profileInputRef}
+              className="hidden"
+              onChange={handleProfileUpload}
+            />
+          </div>
+          <div className="text-center sm:text-left">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {user?.fullName}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              {user?.displayName}
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{user?.displayName}</p>
             <p className="text-sm text-gray-500 dark:text-gray-300">
-              {user?.profileDetails.followers?.length || 0} Followers • {user?.profileDetails.following?.length || 0} Following
+              {user?.profileDetails.followers?.length || 0} Followers •{" "}
+              {user?.profileDetails.following?.length || 0} Following
             </p>
           </div>
         </div>
 
-        {/* Share button only */}
-        <div className="flex gap-2 mt-4 md:mt-0">
+        {/* Share button */}
+        <div className="w-full md:w-auto flex justify-center md:justify-end">
           <button
             onClick={handleShare}
-            className="px-4 py-2 bg-red-500  text-gray-800 dark:text-white rounded hover:bg-white dark:hover:bg-zinc-600"
+            className="px-4 py-2 bg-red-500 text-white dark:text-white rounded hover:bg-white dark:hover:bg-zinc-600 hover:text-black transition"
           >
             Share Profile
           </button>
-          {showShareModal && (
-            <ShareModal
-              url={`http:localhost:5173/dashboard-user/public-profile-details/${user.displayName}`}
-              onClose={() => setShowShareModal(false)}
-            />
-          )}
-
         </div>
+
+        {showShareModal && (
+          <ShareModal
+            url={`http://localhost:5173/dashboard-user/public-profile-details/${user.displayName}`}
+            onClose={() => setShowShareModal(false)}
+          />
+        )}
       </div>
 
       {uploading && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-white font-semibold text-lg">
-            <Spinner size="lg" />
-            <span className="ml-2">Uploading...</span>
+          <Spinner size="lg" />
+          <span className="ml-2">Uploading...</span>
         </div>
-        // <Spinner size="lg" className= "absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-white font-semibold text-lg"/>
       )}
     </div>
   );

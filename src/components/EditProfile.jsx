@@ -143,25 +143,25 @@ const EditeProfile = ({ user }) => {
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-5xl mx-auto">
         {/* Profile Image Upload Section */}
-        <div className="flex items-center gap-6 mb-10">
-          <img
-            src={formData.profileImage || fallbackAvatar}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border-4 border-yellow-500 object-cover"
+        <div className="flex flex-col sm:flex-row items-center gap-6 mb-10">
+        <img
+          src={formData.profileImage || fallbackAvatar}
+          alt="Profile"
+          className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-yellow-500 object-cover"
+        />
+        <div className="w-full sm:w-auto">
+          <label className="block mb-2 text-sm text-gray-300 font-medium">
+            {imageLoading ? <Spinner size="sm" /> : "Change Profile Image"}
+          </label>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            disabled={imageLoading}
+            className="block w-full text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
           />
-          <div>
-            <label className="block mb-2 text-sm text-gray-300 font-medium">
-              {imageLoading ? <Spinner size="sm" /> : "Change Profile Image"}
-            </label>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              disabled={imageLoading}
-              className="block w-full text-sm text-gray-300 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700"
-            />
-          </div>
         </div>
+      </div>
 
         {/* Profile Form */}
         <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>

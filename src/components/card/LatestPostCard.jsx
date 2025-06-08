@@ -65,99 +65,122 @@ const LatestPostCard = ({ post, showMenu = false, style}) => {
 
   return (
     <div className="bg-gray-900 rounded-xl overflow-hidden shadow hover:shadow-lg transition relative group">
-      {showMenu && user?.role && (
-        <div className="hidden group-hover:flex absolute top-2.5 left-2.5 space-x-2.5 transition-all duration-700 z-10">
-          <Link
-            to={`/dashboard-${user.role}/edit-post/${post._id}`}
-            className="bg-yellow-400 px-4 py-2 rounded-md"
-          >
-            Edit
-          </Link>
-          <button
-            onClick={handleDelete}
-            className="bg-red-500 px-4 py-2 rounded-md"
-          >
-            Delete
-          </button>
-        </div>
-      )}
+  {/* Edit/Delete for desktop (hover) & mobile (always visible) */}
+  {showMenu && user?.role && (
+  <div className="absolute top-2.5 left-2.5 z-10">
+    {/* Mobile (always visible) */}
+    <div className="flex sm:hidden space-x-2.5">
+      <Link
+        to={`/dashboard-${user.role}/edit-post/${post._id}`}
+        className="bg-yellow-500 text-black hover:bg-yellow-400 px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"
+      >
+        Edit
+      </Link>
+      <button
+        onClick={handleDelete}
+        className="bg-red-600 text-white hover:bg-red-500 px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"
+      >
+        Delete
+      </button>
+    </div>
 
-      <Link to={`/post/${post._id}`}>
-        <img
-          src={
-            post.image ||
-            "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          }
-          alt={post.title}
-          className="w-full h-48 object-cover"
-        />
+    {/* Desktop (only visible on hover) */}
+    <div className="hidden sm:flex group-hover:flex space-x-2.5">
+      <Link
+        to={`/dashboard-${user.role}/edit-post/${post._id}`}
+        className="bg-yellow-500 text-black hover:bg-yellow-400 px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"
+      >
+        Edit
+      </Link>
+      <button
+        onClick={handleDelete}
+        className="bg-red-600 text-white hover:bg-red-500 px-3 py-1.5 rounded-md text-xs font-semibold shadow-sm"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+)}
+
+
+  <Link to={`/post/${post._id}`}>
+    <img
+      src={
+        post.image ||
+        "https://images.unsplash.com/photo-1619995745882-f4128ac82ad6?q=80&w=3132&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      }
+      alt={post.title}
+      className="w-full h-48 object-cover sm:h-52 md:h-60"
+    />
+  </Link>
+
+  <div className="p-4 text-white" style={style}>
+    <div className="text-xs sm:text-sm text-gray-400 flex justify-between mb-2 flex-wrap gap-1">
+      <span className="uppercase">{post.category || "General"}</span>
+      <span>{new Date(post.createdAt).toDateString()}</span>
+    </div>
+
+    <Link to={`/post/${post._id}`}>
+      <h3 className="text-base sm:text-lg font-semibold mb-3 line-clamp-2 hover:underline">
+        {post.title}
+      </h3>
+    </Link>
+
+    <div className="flex flex-wrap items-center gap-3 text-gray-400 text-sm">
+      <Link to={`/post/${post._id}`} className="hover:text-white">
+        💬 {post.comments?.length || 0} Comments
       </Link>
 
-      <div className="p-4 text-white" style={style}>
-        <div className="text-sm text-gray-400 flex justify-between mb-2">
-          <span className="uppercase">{post.category || "General"}</span>
-          <span>{new Date(post.createdAt).toDateString()}</span>
-        </div>
+      <button
+        onClick={handleLike}
+        disabled={isLoading}
+        className="flex items-center space-x-1 hover:text-red-400 transition"
+      >
+        <FaHeart
+          className={`transition-transform ${
+            liked ? "scale-125 text-red-500" : ""
+          }`}
+        />
+        <span>{likes} Likes</span>
+      </button>
 
-        <Link to={`/post/${post._id}`}>
-          <h3 className="text-lg font-semibold mb-3 line-clamp-2 hover:underline">
-            {post.title}
-          </h3>
-        </Link>
+      <span>👁️ {post.views || 0} Views</span>
 
-        <div className="flex items-center space-x-3 text-gray-400 text-sm">
-          <Link to={`/post/${post._id}`} className="hover:text-white">
-            💬 {post.comments?.length || 0} Comments
-          </Link>
+      <button
+        onClick={toggleModal}
+        className="flex items-center space-x-1 hover:text-blue-400"
+      >
+        <FiShare2 />
+        <span>Share</span>
+      </button>
+    </div>
+  </div>
 
-          <button
-            onClick={handleLike}
-            disabled={isLoading}
-            className="flex items-center space-x-1 hover:text-red-400 transition"
-          >
-            <FaHeart
-              className={`transition-transform ${
-                liked ? "scale-125 text-red-500" : ""
-              }`}
-            />
-            <span>{likes} Likes</span>
-          </button>
-
-          <span>👁️ {post.views || 0} Views</span>
-
+  {/* Modal for Share */}
+  {showModal && (
+    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center z-50">
+      <div className="bg-white p-4 rounded-md text-black w-[90%] max-w-md">
+        <h4 className="text-lg font-semibold mb-2">Share this post</h4>
+        <input
+          type="text"
+          value={`${window.location.origin}/post/${post._id}`}
+          readOnly
+          className="w-full p-2 border border-gray-300 rounded-md"
+          onClick={(e) => e.target.select()}
+        />
+        <div className="flex justify-end mt-3">
           <button
             onClick={toggleModal}
-            className="flex items-center space-x-1 hover:text-blue-400"
+            className="bg-red-500 text-white px-4 py-2 rounded-md"
           >
-            <FiShare2 />
-            <span>Share</span>
+            Close
           </button>
         </div>
       </div>
-
-      {showModal && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-md text-black w-[90%] max-w-md">
-            <h4 className="text-lg font-semibold mb-2">Share this post</h4>
-            <input
-              type="text"
-              value={`${window.location.origin}/post/${post._id}`}
-              readOnly
-              className="w-full p-2 border border-gray-300 rounded-md"
-              onClick={(e) => e.target.select()}
-            />
-            <div className="flex justify-end mt-3">
-              <button
-                onClick={toggleModal}
-                className="bg-red-500 text-white px-4 py-2 rounded-md"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
+  )}
+</div>
+
   );
 };
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../components/Spinner";
 import { useRegisterMutation } from "../features/auth/authSlice";
 
@@ -23,9 +22,13 @@ const Register = () => {
     e.preventDefault();
     try {
       await register(formData).unwrap();
+
       toast.success("🎉 Registration successful! Redirecting to login...");
       setFormData({ fullName: "", email: "", password: "" });
-      setTimeout(() => navigate("/login"), 2000);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     } catch (err) {
       toast.error(err?.data?.message || "Registration failed.");
     }
@@ -49,6 +52,7 @@ const Register = () => {
               value={formData.fullName}
               onChange={handleChange}
               required
+              disabled={isLoading}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
               placeholder="John Doe"
             />
@@ -64,6 +68,7 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              disabled={isLoading}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
               placeholder="you@example.com"
             />
@@ -79,6 +84,7 @@ const Register = () => {
               value={formData.password}
               onChange={handleChange}
               required
+              disabled={isLoading}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
               placeholder="••••••••"
             />
@@ -110,7 +116,6 @@ const Register = () => {
         </Link>
       </div>
 
-      {/* Optional global full-page loader if you prefer */}
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <Spinner size="lg" />

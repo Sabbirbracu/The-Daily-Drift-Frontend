@@ -66,29 +66,61 @@ const PublicProfilePage = () => {
 
   const isCurrentUser = currentUser?.displayName === displayName;
 
-  const handleFollowToggle = async () => {
-    if (!displayName || !currentUser?._id) return;
+  // const handleFollowToggle = async () => {
+  //   if (!displayName || !currentUser?._id) return;
 
-    try {
-      if (isFollowingLocal) {
-        const res = await unfollowUser(displayName).unwrap();
-        if (res.success) {
-          setIsFollowingLocal(false);
-          setFollowerCount((prev) => Math.max(0, prev - 1));
-          refetch(); // Refetch profile to sync followers
-        }
-      } else {
-        const res = await followUser(displayName).unwrap();
-        if (res.success) {
-          setIsFollowingLocal(true);
-          setFollowerCount((prev) => prev + 1);
-          refetch(); // Refetch profile to sync followers
-        }
+  //   try {
+  //     if (isFollowingLocal) {
+  //       const res = await unfollowUser(displayName).unwrap();
+  //       if (res.success) {
+  //         setIsFollowingLocal(false);
+  //         setFollowerCount((prev) => Math.max(0, prev - 1));
+  //         refetch(); // Refetch profile to sync followers
+  //       }
+  //     } else {
+  //       const res = await followUser(displayName).unwrap();
+  //       if (res.success) {
+  //         setIsFollowingLocal(true);
+  //         setFollowerCount((prev) => prev + 1);
+  //         refetch(); // Refetch profile to sync followers
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error("Follow/Unfollow failed", err);
+  //   }
+  // };
+  const handleFollowToggle = async () => {
+  if (!displayName || !currentUser?._id) {
+    console.warn("Missing displayName or currentUser._id", {
+      displayName,
+      currentUser,
+    });
+    return;
+  }
+
+  try {
+    if (isFollowingLocal) {
+      const res = await unfollowUser(displayName).unwrap();
+      console.log("Unfollow response:", res);
+      if (res.success) {
+        setIsFollowingLocal(false);
+        setFollowerCount((prev) => Math.max(0, prev - 1));
+        refetch();
       }
-    } catch (err) {
-      console.error("Follow/Unfollow failed", err);
+    } else {
+      const res = await followUser(displayName).unwrap();
+      console.log("Follow response:", res);
+      if (res.success) {
+        setIsFollowingLocal(true);
+        setFollowerCount((prev) => prev + 1);
+        refetch();
+      }
     }
-  };
+  } catch (err) {
+    console.error("Follow/Unfollow failed", err);
+  }
+};
+
 
   return (
     <div className="max-w-5xl mx-auto text-gray-800 dark:text-white pb-20">
@@ -107,7 +139,7 @@ const PublicProfilePage = () => {
       <div className="relative px-6">
         <div className="absolute -top-14 sm:-top-16 left-6 sm:left-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden shadow-md z-10">
           <img
-            src={profileImage}
+            src={profileImage || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
             alt="Avatar"
             className="w-full h-full object-cover"
           />
