@@ -3,7 +3,7 @@ import PinnedPost from "../components/ProfileDetails/PinnedPost";
 import ReadingList from "../components/ProfileDetails/ReadingList";
 import SocialLinks from "../components/ProfileDetails/SocialLinks";
 import UpperSection from "../components/ProfileDetails/upperSection";
-import UserContent from "../components/ProfileDetails/userContent";
+import UserContent from "../components/ProfileDetails/UserContent";
 import Spinner from "../components/Spinner";
 import { useGetMyProfileQuery } from "../features/users/userApi";
 
