@@ -50,7 +50,7 @@ const PublicProfilePage = () => {
 
   if (isLoading) return <Spinner />;
   if (isError || !profileData)
-    return <div className="text-center py-10">User not found</div>;
+    return <div className="text-center py-10 text-gray-700 dark:text-white">User not found</div>;
 
   const {
     fullName,
@@ -66,61 +66,29 @@ const PublicProfilePage = () => {
 
   const isCurrentUser = currentUser?.displayName === displayName;
 
-  // const handleFollowToggle = async () => {
-  //   if (!displayName || !currentUser?._id) return;
-
-  //   try {
-  //     if (isFollowingLocal) {
-  //       const res = await unfollowUser(displayName).unwrap();
-  //       if (res.success) {
-  //         setIsFollowingLocal(false);
-  //         setFollowerCount((prev) => Math.max(0, prev - 1));
-  //         refetch(); // Refetch profile to sync followers
-  //       }
-  //     } else {
-  //       const res = await followUser(displayName).unwrap();
-  //       if (res.success) {
-  //         setIsFollowingLocal(true);
-  //         setFollowerCount((prev) => prev + 1);
-  //         refetch(); // Refetch profile to sync followers
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error("Follow/Unfollow failed", err);
-  //   }
-  // };
   const handleFollowToggle = async () => {
-  if (!displayName || !currentUser?._id) {
-    console.warn("Missing displayName or currentUser._id", {
-      displayName,
-      currentUser,
-    });
-    return;
-  }
+    if (!displayName || !currentUser?._id) return;
 
-  try {
-    if (isFollowingLocal) {
-      const res = await unfollowUser(displayName).unwrap();
-      console.log("Unfollow response:", res);
-      if (res.success) {
-        setIsFollowingLocal(false);
-        setFollowerCount((prev) => Math.max(0, prev - 1));
-        refetch();
+    try {
+      if (isFollowingLocal) {
+        const res = await unfollowUser(displayName).unwrap();
+        if (res.success) {
+          setIsFollowingLocal(false);
+          setFollowerCount((prev) => Math.max(0, prev - 1));
+          refetch();
+        }
+      } else {
+        const res = await followUser(displayName).unwrap();
+        if (res.success) {
+          setIsFollowingLocal(true);
+          setFollowerCount((prev) => prev + 1);
+          refetch();
+        }
       }
-    } else {
-      const res = await followUser(displayName).unwrap();
-      console.log("Follow response:", res);
-      if (res.success) {
-        setIsFollowingLocal(true);
-        setFollowerCount((prev) => prev + 1);
-        refetch();
-      }
+    } catch (err) {
+      console.error("Follow/Unfollow failed", err);
     }
-  } catch (err) {
-    console.error("Follow/Unfollow failed", err);
-  }
-};
-
+  };
 
   return (
     <div className="max-w-5xl mx-auto text-gray-800 dark:text-white pb-20">
@@ -139,7 +107,10 @@ const PublicProfilePage = () => {
       <div className="relative px-6">
         <div className="absolute -top-14 sm:-top-16 left-6 sm:left-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden shadow-md z-10">
           <img
-            src={profileImage || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
+            src={
+              profileImage ||
+              "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+            }
             alt="Avatar"
             className="w-full h-full object-cover"
           />
@@ -151,13 +122,13 @@ const PublicProfilePage = () => {
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
             <h2 className="text-3xl font-bold">{fullName}</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{name}</p>
+            <p className="text-sm text-gray-600 dark:text-white">{name}</p>
           </div>
 
           {/* Follow Button */}
           {currentUser && !isCurrentUser && (
             <div className="flex items-center gap-3 text-sm">
-              <span className="text-gray-600 dark:text-gray-300">
+              <span className="text-gray-600 dark:text-white">
                 {followerCount} Followers
               </span>
               <button
@@ -184,19 +155,17 @@ const PublicProfilePage = () => {
         {/* Bio */}
         <div className="mt-6">
           <h3 className="text-xl font-semibold mb-1">Bio</h3>
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-            {bio || (
-              <span className="text-gray-400">No bio available.</span>
-            )}
+          <p className="text-gray-700 dark:text-white leading-relaxed">
+            {bio || <span className="text-gray-400 dark:text-gray-500">No bio available.</span>}
           </p>
         </div>
 
         {/* About Me */}
         <div className="mt-6">
           <h3 className="text-xl font-semibold mb-1">About Me</h3>
-          <p className="whitespace-pre-line text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="whitespace-pre-line text-gray-700 dark:text-white leading-relaxed">
             {aboutMe || (
-              <span className="text-gray-400">
+              <span className="text-gray-400 dark:text-gray-500">
                 No about me information available.
               </span>
             )}
@@ -214,10 +183,7 @@ const PublicProfilePage = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <FaFacebook
-                    className="text-blue-600 hover:text-blue-800"
-                    size={22}
-                  />
+                  <FaFacebook className="text-blue-600 hover:text-blue-800" size={22} />
                 </a>
               )}
               {socialLinks.linkedin && (
@@ -226,26 +192,17 @@ const PublicProfilePage = () => {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <FaLinkedin
-                    className="text-blue-500 hover:text-blue-700"
-                    size={22}
-                  />
+                  <FaLinkedin className="text-blue-500 hover:text-blue-700" size={22} />
                 </a>
               )}
               {socialLinks.github && (
                 <a href={socialLinks.github} target="_blank" rel="noreferrer">
-                  <FaGithub
-                    className="text-gray-800 dark:text-white hover:text-gray-700"
-                    size={22}
-                  />
+                  <FaGithub className="text-gray-800 dark:text-white hover:text-gray-700" size={22} />
                 </a>
               )}
               {socialLinks.twitter && (
                 <a href={socialLinks.twitter} target="_blank" rel="noreferrer">
-                  <FaTwitter
-                    className="text-sky-500 hover:text-sky-700"
-                    size={22}
-                  />
+                  <FaTwitter className="text-sky-500 hover:text-sky-700" size={22} />
                 </a>
               )}
             </div>
@@ -260,14 +217,14 @@ const PublicProfilePage = () => {
               {expertise.map((tag) => (
                 <span
                   key={tag}
-                  className="bg-zinc-100 dark:bg-zinc-700 px-4 py-1 rounded-full text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="bg-zinc-100 dark:bg-zinc-700 px-4 py-1 rounded-full text-sm font-medium text-gray-700 dark:text-white"
                 >
                   {tag}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-300">
               No expertise tags available.
             </p>
           )}
@@ -279,7 +236,7 @@ const PublicProfilePage = () => {
           {pinnedPostData ? (
             <LatestPostCard post={pinnedPostData} showMenu={false} />
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-300">
               No pinned post available.
             </p>
           )}
@@ -295,7 +252,7 @@ const PublicProfilePage = () => {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-300">
               No posts in reading list yet.
             </p>
           )}
